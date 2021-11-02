@@ -8,12 +8,14 @@ commands:
     steps:
       - slack/notify:
           event: fail
+          channel: C02KQNBN3T8
           template: basic_fail_1
 
   notify_slack_pass:
     steps:
       - slack/notify:
           event: pass
+          channel: C02KQNBN3T8
           template: basic_success_1
 
 jobs:
