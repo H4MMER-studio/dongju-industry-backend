@@ -9,3 +9,8 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World!"
+
+workflows:
+  slack-notification-test:
+    jobs:
+      - slack-test    
