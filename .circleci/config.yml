@@ -24,10 +24,10 @@ jobs:
     steps:
       - checkout
       - python/install-packages:
-        pkg-manager: poetry
+          pkg-manager: poetry
       - run:
-        name: Run tests
-        command: poetry run pytest --version
+          name: Run tests
+          command: poetry run pytest --version
       - notify_slack_error
       - notify_slack_pass     
 
