@@ -23,7 +23,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Say hello"
+          name: "Say hi"
           command: "echo Hello, World!"
       - notify_slack_error
       - notify_slack_pass     
