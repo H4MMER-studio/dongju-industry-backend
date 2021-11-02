@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   slack: circleci/slack@4.4.4
+  python: circleci/python@1.4.0
 
 commands:
   notify_slack_error:
@@ -17,20 +18,25 @@ commands:
           template: basic_success_1
 
 jobs:
-  slack-test:
+  build-and-test:
     docker:
-      - image: 'cimg/base:stable'    
+      - image: 'cimg/python:3.9'    
     steps:
       - checkout
+      - python/install-packages:
+        pkg-manager: poetry
       - run:
-          name: "Say hi"
-          command: "echo Hello, World!"
+        name: Run tests
+        command: poetry run pytest --version
       - notify_slack_error
       - notify_slack_pass     
 
 workflows:
-  deploy-test:
+  deploy:
     jobs:
-      - slack-test:
+      - build-and-test:
           context: slack-secrets
+          filters:
+            branches:
+              only: main
       
