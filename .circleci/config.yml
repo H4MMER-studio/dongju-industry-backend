@@ -21,7 +21,6 @@ jobs:
     docker:
       - image: 'cimg/base:stable'    
     steps:
-      - trigger_slack_notification
       - checkout
       - run:
           name: "Say hello"
@@ -32,5 +31,6 @@ jobs:
 workflows:
   deploy-test:
     jobs:
-      - slack-test
+      - slack-test:
+          context: slack-secrets
       
