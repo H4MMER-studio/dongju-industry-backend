@@ -2,6 +2,8 @@ version: 2.1
 
 jobs:
   slack-test:
+    docker:
+      - image: 'cimg/base:stable'    
     steps:
       - checkout
       - run:
