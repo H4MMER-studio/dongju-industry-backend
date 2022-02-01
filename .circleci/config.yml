@@ -20,7 +20,7 @@ commands:
 jobs:
   build-and-test:
     docker:
-      - image: 'cimg/python:3.9'    
+      - image: "cimg/python:3.9"
     steps:
       - checkout
       - python/install-packages:
@@ -29,14 +29,13 @@ jobs:
           name: Run tests
           command: poetry run pytest --version
       - notify_slack_error
-      - notify_slack_pass     
+      - notify_slack_pass
 
 workflows:
   deploy:
     jobs:
       - build-and-test:
-          context: slack-secrets
+          context: backend-slack-secrets
           filters:
             branches:
               only: main
-      
