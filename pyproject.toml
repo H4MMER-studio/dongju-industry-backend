@@ -6,7 +6,7 @@ authors = ["H4MMER.studio <leddobby@weekwith.me>"]
 license = "Apache"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 fastapi = "^0.70.0"
 uvicorn = "^0.15.0"
 strawberry-graphql = {extras = ["fastapi"], version = "^0.85.1"}
