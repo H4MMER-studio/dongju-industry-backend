@@ -6,7 +6,7 @@ authors = ["H4MMER.studio <leddobby@weekwith.me>"]
 license = "Apache"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 fastapi = "^0.70.0"
 uvicorn = "^0.15.0"
 strawberry-graphql = {extras = ["fastapi"], version = "^0.85.1"}
@@ -21,6 +21,7 @@ flake8 = "^4.0.1"
 isort = "^5.10.1"
 black = "^22.1.0"
 pre-commit = "^2.17.0"
+mypy = "^0.931"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
