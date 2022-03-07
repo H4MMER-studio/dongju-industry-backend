@@ -3,7 +3,7 @@ from enum import Enum
 from src.schema.crud import CRUDSchemaBase
 
 
-class NoticeType(Enum):
+class NoticeType(str, Enum):
     ARCHIVE = "자료실"
     NOTIFICATION = "공지사항"
 
@@ -18,7 +18,7 @@ class NoticeBase(CRUDSchemaBase):
     notice_type: NoticeType | None
     notice_title: str | None
     notice_content: str | None
-    notice_data: str | None
+    notice_files: list[dict[str, str]] | None
 
 
 class CreateNotice(NoticeBase):
