@@ -3,7 +3,7 @@ from enum import Enum
 from src.schema.crud import CRUDSchemaBase
 
 
-class CertificationType(Enum, str):
+class CertificationType(str, Enum):
     LICENSE = "등록증"
     CERTIFICATION = "주요 인증"
     PATENT = "특허증"
@@ -16,13 +16,13 @@ class CertificationBase(CRUDSchemaBase):
     certification_content: str | None
     certification_date: str | None
     certification_organization: str | None
-    certification_image: str | None
+    certification_images: list[str] | None
 
 
 class CreateCertification(CertificationBase):
     certification_type: CertificationType
     certification_title: str
-    certification_image: str
+    certification_images: list[str]
 
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}
