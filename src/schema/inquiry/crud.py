@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 
 from pydantic import EmailStr
@@ -22,9 +23,11 @@ class InquiryBase(CRUDSchemaBase):
     inquiry_product: Product | None
     inquiry_phone_number: str | None
     inquiry_details: str | None
+    inquiry_status: bool = False
 
 
 class CreateInquiry(InquiryBase):
+    created_at: datetime = datetime.now(tz=timezone(offset=timedelta(hours=9)))
     inquiry_title: str
     inquiry_email: EmailStr
     inquiry_person_name: str

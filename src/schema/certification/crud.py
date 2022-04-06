@@ -16,14 +16,14 @@ class CertificationBase(CRUDSchemaBase):
     certification_content: str | None
     certification_date: str | None
     certification_organization: str | None
-    certification_images: list[str] | None
+    certification_images: list[dict[str, str]] | None
 
 
 class CreateCertification(CertificationBase):
     certification_type: CertificationType
     certification_title: str
-    certification_images: list[str]
-
+    certification_images: list[dict[str, str]]
+      
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}
 
