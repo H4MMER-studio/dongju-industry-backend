@@ -22,8 +22,6 @@ async def connect_db():
     app.fs = AsyncIOMotorGridFSBucket(app.db)
 
 
-
-
 @app.on_event("shutdown")
 async def close_db():
     app.db_client.close()

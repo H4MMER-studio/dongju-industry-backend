@@ -9,6 +9,7 @@ from src.util import parse_formdata
 
 router = APIRouter()
 
+
 @router.get("/{certification_id}")
 async def get_certification(
     request: Request, certification_id: str
