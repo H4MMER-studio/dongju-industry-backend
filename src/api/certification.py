@@ -9,7 +9,6 @@ from src.util import parse_formdata
 
 router = APIRouter()
 
-
 @router.get("/{certification_id}")
 async def get_certification(
     request: Request, certification_id: str
@@ -157,3 +156,4 @@ async def delete_certification(
             content={"detail": error},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+      

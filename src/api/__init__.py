@@ -24,6 +24,3 @@ router.include_router(
 router.include_router(
     router=delivery.router, prefix="/delivery", tags=["Delivery"]
 )
-router.include_router(
-    router=certification.router, prefix="/certification", tags=["Certication"]
-)
