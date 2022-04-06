@@ -16,9 +16,9 @@ class CreateDelivery(DeliveryBase):
     delivery_date: str
 
     class Config:
-        schema_extra = {"example": {}}  # type: ignore
+        schema_extra: dict[str, dict] = {"example": {}}
 
 
 class UpdateDelivery(DeliveryBase):
     class Config:
-        schema_extra = {"example": {}}  # type: ignore
+        schema_extra: dict[str, dict] = {"example": {}}

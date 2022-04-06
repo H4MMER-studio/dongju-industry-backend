@@ -1,39 +1,114 @@
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse  # noqa
+from bson.objectid import InvalidId
+from fastapi import APIRouter, Query, Request, status
+from fastapi.responses import JSONResponse
 
-from src.crud import history_crud  # noqa
-from src.schema import CreateHistory, UpdateHistory  # noqa
+from src.crud import history_crud
+from src.schema import CreateHistory, UpdateHistory
 
 router = APIRouter()
 
 
-"""
-To Do
-- 일괄 수정
-- 일괄 삭제
-"""
-
-
-@router.get("")
-async def get_history():
-    pass
-
-
 @router.get("s")
-async def get_histories():
-    pass
+async def get_histories(
+    request: Request,
+    skip: int | None = Query(default=0),
+    limit: int | None = Query(default=0),
+    sort: list[str] = Query(
+        default=["history-year desc", "history-month desc"]
+    ),
+) -> JSONResponse:
+    try:
+
+        if result := await history_crud.get_multi(
+            request=request, skip=skip, limit=limit, sort=sort
+        ):
+            return JSONResponse(
+                content={"data": result}, status_code=status.HTTP_200_OK
+            )
+
+        else:
+            return JSONResponse(
+                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+            )
+
+    except Exception as error:
+        return JSONResponse(
+            content={"detail": error},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @router.post("")
-async def create_history():
-    pass
+async def create_history(
+    request: Request, insert_data: CreateHistory
+) -> JSONResponse:
+    try:
+        await history_crud.create(request=request, insert_data=insert_data)
+
+        return JSONResponse(
+            content={"detail": "Success"}, status_code=status.HTTP_200_OK
+        )
+
+    except Exception as error:
+        return JSONResponse(
+            content={"detail": error},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
-@router.put("")
-async def update_history():
-    pass
+@router.patch("s")
+async def update_history(
+    request: Request, update_data: list[UpdateHistory]
+) -> JSONResponse:
+    try:
+
+        if await history_crud.bulk_update(
+            request=request, update_data=update_data, model="history"
+        ):
+            return JSONResponse(
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+            )
+
+        else:
+            return JSONResponse(
+                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+            )
+
+    except InvalidId as invalid_id_error:
+        return JSONResponse(
+            content={"detail": str(invalid_id_error)},
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    except Exception as error:
+        return JSONResponse(
+            content={"detail": error},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
-@router.delete("")
-async def delete_history():
-    pass
+@router.delete("s")
+async def delete_history(
+    request: Request, history_ids: list[str]
+) -> JSONResponse:
+    try:
+        if await history_crud.bulK_delete(request=request, ids=history_ids):
+            return JSONResponse(
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+            )
+        else:
+            return JSONResponse(
+                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+            )
+
+    except InvalidId as invalid_id_error:
+        return JSONResponse(
+            content={"detail": str(invalid_id_error)},
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    except Exception as error:
+        return JSONResponse(
+            content={"detail": error},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )

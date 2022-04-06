@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
-from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi.middleware.cors import CORSMiddleware
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
 
 from src.api import router
 from src.core import get_settings
@@ -18,11 +19,26 @@ app.include_router(router=router, prefix="/api")
 async def connect_db():
     app.db_client = AsyncIOMotorClient(get_settings().DB_URL)
     app.db = app.db_client[get_settings().DB_NAME]
+    app.fs = AsyncIOMotorGridFSBucket(app.db)
+
 
 
 @app.on_event("shutdown")
 async def close_db():
     app.db_client.close()
+
+
+origins = [
+    "http://127.0.0.1:5500",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 if __name__ == "__main__":

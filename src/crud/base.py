@@ -1,10 +1,10 @@
-from typing import Generic, List, Optional, TypeVar
+from typing import Generic, TypeVar
 
-from bson.objectid import InvalidId, ObjectId
+from bson.objectid import ObjectId
 from fastapi import Request
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from pymongo import ASCENDING, DESCENDING
+from pymongo import ASCENDING, DESCENDING, DeleteOne, UpdateOne
 
 CreateSchema = TypeVar("CreateSchema", bound=BaseModel)
 UpdateSchema = TypeVar("UpdateSchema", bound=BaseModel)
@@ -14,32 +14,25 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
     def __init__(self, collection: str) -> None:
         self.collection = collection
 
-    async def get_one(self, request: Request, id: str) -> Optional[dict]:
-        try:
-            document = await request.app.db[self.collection].find_one(
-                {"_id": ObjectId(id)}
-            )
-            document["_id"] = str(document["_id"])
+    async def get_one(self, request: Request, id: str) -> dict | None:
+        document = await request.app.db[self.collection].find_one(
+            {"_id": ObjectId(id)}
+        )
+        document["_id"] = str(document["_id"])
 
-            return document
-
-        except InvalidId:
-            raise TypeError
+        return document
 
     async def get_multi(
         self,
         request: Request,
         skip: int,
         limit: int,
-        sort: Optional[List[str]],
-    ) -> Optional[List[dict]]:
+        sort: list[str] | None,
+    ) -> list[dict] | None:
         query = request.app.db[self.collection].find()
 
         if sort:
             sort_field = []
-
-            if not type(sort) is list:
-                sort = list(type)
 
             for query_string in sort:
                 field, option = query_string.split(" ")
@@ -78,29 +71,53 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
     async def update(
         self, request: Request, id: str, update_data: UpdateSchema
     ) -> bool:
-        try:
-            update_data = update_data.dict(exclude_none=True)
+        update_data = update_data.dict(exclude_none=True)
 
-            updated_document = await request.app.db[
-                self.collection
-            ].find_one_and_update(
-                {"_id": ObjectId(id)},
-                {"$set": jsonable_encoder(update_data)},
-                upsert=False,
-            )
+        updated_document = await request.app.db[
+            self.collection
+        ].find_one_and_update(
+            {"_id": ObjectId(id)},
+            {"$set": jsonable_encoder(update_data)},
+            upsert=False,
+        )
 
-            return updated_document
-
-        except InvalidId:
-            raise TypeError
+        return updated_document
 
     async def delete(self, request: Request, id: str) -> bool:
-        try:
-            deleted_document = await request.app.db[
-                self.collection
-            ].find_one_and_delete({"_id": ObjectId(id)})
+        deleted_document = await request.app.db[
+            self.collection
+        ].find_one_and_delete({"_id": ObjectId(id)})
 
-            return deleted_document
+        return deleted_document
 
-        except InvalidId:
-            raise TypeError
+    async def bulk_update(
+        self, request: Request, update_data: list[UpdateSchema], model: str
+    ) -> bool:
+        query: list[UpdateOne] = []
+
+        for data in update_data:
+            id = ObjectId(data.dict(exclude_none=True).pop(f"{model}_id"))
+            query.append(
+                UpdateOne({"_id": id}, {"$set": jsonable_encoder(data)})
+            )
+
+        updated_document = await request.app.db[self.collection].bulk_write(
+            query
+        )
+
+        return (
+            True
+            if (updated_document.modified_count == len(update_data))
+            else False
+        )
+
+    async def bulK_delete(self, request: Request, ids: list[str]) -> bool:
+        query: list[DeleteOne] = [
+            DeleteOne({"_id": ObjectId(id)}) for id in ids
+        ]
+
+        deleted_document = await request.app.db[self.collection].bulk_write(
+            query
+        )
+
+        return True if deleted_document.deleted_count == len(ids) else False
