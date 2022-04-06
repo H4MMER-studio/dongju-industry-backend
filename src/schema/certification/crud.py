@@ -23,7 +23,7 @@ class CreateCertification(CertificationBase):
     certification_type: CertificationType
     certification_title: str
     certification_images: list[dict[str, str]]
-
+      
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}
 

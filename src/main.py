@@ -23,6 +23,7 @@ async def connect_db():
 
 
 
+
 @app.on_event("shutdown")
 async def close_db():
     app.db_client.close()
