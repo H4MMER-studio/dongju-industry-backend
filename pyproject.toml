@@ -14,6 +14,7 @@ python-dotenv = "^0.19.2"
 pydantic = {extras = ["email"], version = "^1.9.0"}
 python-multipart = "^0.0.5"
 aioboto3 = "^9.4.0"
+gunicorn = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
