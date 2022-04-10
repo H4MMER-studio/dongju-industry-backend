@@ -1,9 +1,8 @@
-from datetime import datetime, timedelta, timezone
 from enum import Enum
 
 from pydantic import EmailStr
 
-from src.schema.crud import CRUDSchemaBase
+from src.schema.crud import CreateSchemaBase, CRUDSchemaBase, UpdateSchemaBase
 
 
 class Product(Enum):
@@ -26,20 +25,19 @@ class InquiryBase(CRUDSchemaBase):
     inquiry_status: bool = False
 
 
-class CreateInquiry(InquiryBase):
-    created_at: datetime = datetime.now(tz=timezone(offset=timedelta(hours=9)))
+class CreateInquiry(InquiryBase, CreateSchemaBase):
     inquiry_title: str
     inquiry_email: EmailStr
     inquiry_person_name: str
     inquiry_company_name: str
     inquiry_product: Product
     inquiry_phone_number: str
-    inquiry_detais: str
+    inquiry_details: str
 
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}
 
 
-class UpdateInquiry(InquiryBase):
+class UpdateInquiry(InquiryBase, UpdateSchemaBase):
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}

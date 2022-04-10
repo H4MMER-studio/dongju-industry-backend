@@ -1,6 +1,6 @@
 from enum import Enum
 
-from src.schema.crud import CRUDSchemaBase
+from src.schema.crud import CreateSchemaBase, CRUDSchemaBase, UpdateSchemaBase
 
 
 class CertificationType(str, Enum):
@@ -19,15 +19,15 @@ class CertificationBase(CRUDSchemaBase):
     certification_images: list[dict[str, str]] | None
 
 
-class CreateCertification(CertificationBase):
+class CreateCertification(CertificationBase, CreateSchemaBase):
     certification_type: CertificationType
     certification_title: str
     certification_images: list[dict[str, str]]
-    
+
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}
 
 
-class UpdateCertification(CertificationBase):
+class UpdateCertification(CertificationBase, UpdateSchemaBase):
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}

@@ -1,4 +1,4 @@
-from src.schema.crud import CRUDSchemaBase
+from src.schema.crud import CreateSchemaBase, CRUDSchemaBase, UpdateSchemaBase
 
 
 class DeliveryBase(CRUDSchemaBase):
@@ -9,7 +9,7 @@ class DeliveryBase(CRUDSchemaBase):
     delivery_reference: str | None
 
 
-class CreateDelivery(DeliveryBase):
+class CreateDelivery(DeliveryBase, CreateSchemaBase):
     delivery_supplier: str
     delivery_product: str
     delivery_amount: int
@@ -19,6 +19,6 @@ class CreateDelivery(DeliveryBase):
         schema_extra: dict[str, dict] = {"example": {}}
 
 
-class UpdateDelivery(DeliveryBase):
+class UpdateDelivery(DeliveryBase, UpdateSchemaBase):
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}
