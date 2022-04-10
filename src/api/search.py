@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 
-router = APIRouter()
+SINGLE_PREFIX = "/search"
+
+router = APIRouter(prefix=SINGLE_PREFIX)
 
 
 @router.get("")

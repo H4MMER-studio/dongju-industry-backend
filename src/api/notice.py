@@ -7,7 +7,9 @@ from src.crud import notice_crud
 from src.schema import CreateNotice, UpdateNotice
 from src.util import parse_formdata
 
-router = APIRouter()
+SINGLE_PREFIX = "/notice"
+
+router = APIRouter(prefix=SINGLE_PREFIX)
 
 
 @router.get("/{notice_id}")

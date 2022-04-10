@@ -7,7 +7,9 @@ from src.crud import certification_crud
 from src.schema import CreateCertification, UpdateCertification
 from src.util import parse_formdata
 
-router = APIRouter()
+SINGLE_PREFIX = "/certification"
+
+router = APIRouter(prefix=SINGLE_PREFIX)
 
 
 @router.get("/{certification_id}")

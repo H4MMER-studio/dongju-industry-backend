@@ -4,7 +4,9 @@ from fastapi.responses import JSONResponse, Response
 
 from src.crud import file_crud
 
-router = APIRouter()
+SINGLE_PREFIX = "/file"
+
+router = APIRouter(prefix=SINGLE_PREFIX)
 
 
 @router.get("/{file_name}")

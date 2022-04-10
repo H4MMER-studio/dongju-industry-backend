@@ -5,10 +5,13 @@ from fastapi.responses import JSONResponse
 from src.crud import delivery_crud
 from src.schema import CreateDelivery, UpdateDelivery
 
+SINGLE_PREFIX = "/delivery"
+PLURAL_PREFIX = "/deliveries"
+
 router = APIRouter()
 
 
-@router.get("/deliveries")
+@router.get(PLURAL_PREFIX)
 async def get_deliveries(
     request: Request,
     skip: int = Query(default=0),
@@ -35,7 +38,7 @@ async def get_deliveries(
         )
 
 
-@router.post("/delivery")
+@router.post(SINGLE_PREFIX)
 async def create_delivery(
     request: Request, insert_data: CreateDelivery
 ) -> JSONResponse:
@@ -53,7 +56,7 @@ async def create_delivery(
         )
 
 
-@router.patch("/delivery/{delivery_id}")
+@router.patch(SINGLE_PREFIX + "/{delivery_id}")
 async def update_delivery_partialy(
     request: Request, delivery_id: str, update_data: UpdateDelivery
 ) -> JSONResponse:
@@ -83,7 +86,7 @@ async def update_delivery_partialy(
         )
 
 
-@router.delete("/delivery/{delivery_id}")
+@router.delete(SINGLE_PREFIX + "/{delivery_id}")
 async def delete_delivery(request: Request, delivery_id: str) -> JSONResponse:
     try:
         if await delivery_crud.delete(request=request, id=delivery_id):

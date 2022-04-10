@@ -5,10 +5,13 @@ from fastapi.responses import JSONResponse
 from src.crud import history_crud
 from src.schema import CreateHistory, UpdateHistory
 
+SINGLE_PREFIX = "/history"
+PLURAL_PREFIX = "/histories"
+
 router = APIRouter()
 
 
-@router.get("/histories")
+@router.get(PLURAL_PREFIX)
 async def get_histories(
     request: Request,
     skip: int = Query(default=0),
@@ -38,7 +41,7 @@ async def get_histories(
         )
 
 
-@router.post("/history")
+@router.post(SINGLE_PREFIX)
 async def create_history(
     request: Request, insert_data: CreateHistory
 ) -> JSONResponse:
@@ -56,7 +59,7 @@ async def create_history(
         )
 
 
-@router.patch("/histories")
+@router.patch(PLURAL_PREFIX)
 async def update_history(
     request: Request, update_data: list[UpdateHistory]
 ) -> JSONResponse:
@@ -87,7 +90,7 @@ async def update_history(
         )
 
 
-@router.delete("/histories")
+@router.delete(PLURAL_PREFIX)
 async def delete_history(
     request: Request, history_ids: list[str]
 ) -> JSONResponse:
