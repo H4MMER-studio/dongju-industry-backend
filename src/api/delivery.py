@@ -16,7 +16,13 @@ async def get_deliveries(
     request: Request,
     skip: int = Query(default=0),
     limit: int = Query(default=0),
-    sort: list[str] = Query(default=["delivery-date asc"]),
+    sort: list[str] = Query(
+        default=[
+            "delivery-date asc",
+            "delivery-reference asc",
+            "delivery-amount asc",
+        ]
+    ),
 ) -> JSONResponse:
     try:
         if result := await delivery_crud.get_multi(
