@@ -18,7 +18,8 @@ async def get_deliveries(
     limit: int = Query(default=0),
     sort: list[str] = Query(
         default=[
-            "delivery-date asc",
+            "delivery-year asc",
+            "delivery-month asc",
             "delivery-reference asc",
             "delivery-amount asc",
         ]
