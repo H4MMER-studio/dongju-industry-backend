@@ -44,8 +44,8 @@ async def get_certification(
 @router.get("s")
 async def get_certifications(
     request: Request,
-    skip: int | None = Query(default=0),
-    limit: int | None = Query(default=0),
+    skip: int = Query(default=0),
+    limit: int = Query(default=0),
     sort: list[str] = Query(default=["certification-date asc"]),
 ) -> JSONResponse:
     try:
@@ -157,4 +157,3 @@ async def delete_certification(
             content={"detail": error},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-          

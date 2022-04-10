@@ -8,7 +8,7 @@ from src.schema import CreateInquiry
 router = APIRouter()
 
 
-@router.get("/{inquiry_id}")
+@router.get("/inquiry/{inquiry_id}")
 async def get_inquiry(request: Request, inquiry_id: str):
     try:
         if result := await inquiry_crud.get_one(
@@ -36,7 +36,7 @@ async def get_inquiry(request: Request, inquiry_id: str):
         )
 
 
-@router.get("s")
+@router.get("/inquiries")
 async def get_inquries(
     request: Request,
     skip: int | None = Query(default=0),
@@ -63,7 +63,7 @@ async def get_inquries(
         )
 
 
-@router.post("")
+@router.post("/inquiry")
 async def create_inquiry(
     request: Request, insert_data: CreateInquiry
 ) -> JSONResponse:

@@ -40,8 +40,8 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
 @router.get("s")
 async def get_notices(
     request: Request,
-    skip: int | None = Query(default=0),
-    limit: int | None = Query(default=0),
+    skip: int = Query(default=0),
+    limit: int = Query(default=0),
     sort: list[str] = Query(default=["created-at asc"]),
 ) -> JSONResponse:
     try:

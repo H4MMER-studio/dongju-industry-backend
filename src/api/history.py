@@ -8,11 +8,11 @@ from src.schema import CreateHistory, UpdateHistory
 router = APIRouter()
 
 
-@router.get("s")
+@router.get("/histories")
 async def get_histories(
     request: Request,
-    skip: int | None = Query(default=0),
-    limit: int | None = Query(default=0),
+    skip: int = Query(default=0),
+    limit: int = Query(default=0),
     sort: list[str] = Query(
         default=["history-year desc", "history-month desc"]
     ),
@@ -38,7 +38,7 @@ async def get_histories(
         )
 
 
-@router.post("")
+@router.post("/history")
 async def create_history(
     request: Request, insert_data: CreateHistory
 ) -> JSONResponse:
@@ -56,7 +56,7 @@ async def create_history(
         )
 
 
-@router.patch("s")
+@router.patch("/histories")
 async def update_history(
     request: Request, update_data: list[UpdateHistory]
 ) -> JSONResponse:
@@ -87,7 +87,7 @@ async def update_history(
         )
 
 
-@router.delete("s")
+@router.delete("/histories")
 async def delete_history(
     request: Request, history_ids: list[str]
 ) -> JSONResponse:
