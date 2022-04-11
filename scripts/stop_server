@@ -1,1 +1,8 @@
 # !/bin/bash
+
+cd /home/ubuntu/build
+rm -rf ./forour-backend
+
+SERVER=`lsof -i :80 -sTCP:LISTEN -t`
+
+if ["$SERVER"] ; then pkill gunicorn; fi

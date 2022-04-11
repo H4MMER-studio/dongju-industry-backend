@@ -1,0 +1,21 @@
+version: 0.0
+os: linux
+permissions:
+  - object: /home/ubuntu/build/
+    mode: 755
+    owner: root
+    type:
+      - directory
+hooks:
+  BeforeInstall:
+    - location: scripts/stop_server
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: scripts/deploy_source
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_server
+      timeout: 3600
+      runas: root
