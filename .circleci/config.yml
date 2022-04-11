@@ -22,7 +22,7 @@ commands:
             aws ssm put-parameter \
               --name "PRODUCT_DB_URL" \
               --type "String" \
-              --value ${PRODUCT_DB_URL} \
+              --value ${DB_URL} \
               --overwrite
 
       - run:
@@ -31,7 +31,7 @@ commands:
             aws ssm put-parameter \
               --name "PRODUCT_AWS_S3_BUCKET_NAME" \
               --type "String" \
-              --value ${PRODUCT_AWS_S3_BUCKET_NAME} \
+              --value ${AWS_S3_BUCKET_NAME} \
               --overwrite
 
       - run:
@@ -40,7 +40,7 @@ commands:
             aws ssm put-parameter \
               --name "PRODUCT_AWS_ACCESS_KEY_ID" \
               --type "String" \
-              --value ${PRODUCT_AWS_ACCESS_KEY_ID} \
+              --value ${AWS_ACCESS_KEY_ID} \
               --overwrite
 
       - run:
@@ -49,7 +49,7 @@ commands:
             aws ssm put-parameter \
               --name "PRODUCT_AWS_SECRET_ACCESS_KEY" \
               --type "String" \
-              --value ${PRODUCT_AWS_SECRET_ACCESS_KEY} \
+              --value ${AWS_SECRET_ACCESS_KEY} \
               --overwrite
 
       - run:
