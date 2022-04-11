@@ -7,7 +7,9 @@ from src.crud import notice_crud
 from src.schema import CreateNotice, UpdateNotice
 from src.util import parse_formdata
 
-router = APIRouter()
+SINGLE_PREFIX = "/notice"
+
+router = APIRouter(prefix=SINGLE_PREFIX)
 
 
 @router.get("/{notice_id}")
@@ -40,8 +42,8 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
 @router.get("s")
 async def get_notices(
     request: Request,
-    skip: int | None = Query(default=0),
-    limit: int | None = Query(default=0),
+    skip: int = Query(default=0),
+    limit: int = Query(default=0),
     sort: list[str] = Query(default=["created-at asc"]),
 ) -> JSONResponse:
     try:

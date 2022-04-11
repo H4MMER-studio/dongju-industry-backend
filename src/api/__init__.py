@@ -12,18 +12,10 @@ from src.api import (
 
 router = APIRouter(prefix="/v1")
 
-router.include_router(router=file.router, prefix="/file", tags=["File"])
-router.include_router(router=search.router, prefix="/search", tags=["Search"])
-router.include_router(
-    router=inquiry.router, prefix="/inquiry", tags=["Inquiry"]
-)
-router.include_router(router=notice.router, prefix="/notice", tags=["Notice"])
-router.include_router(
-    router=history.router, prefix="/history", tags=["History"]
-)
-router.include_router(
-    router=delivery.router, prefix="/delivery", tags=["Delivery"]
-)
-router.include_router(
-    router=certification.router, prefix="/certification", tags=["Certification"]
-)
+router.include_router(router=file.router, tags=["파일"])
+router.include_router(router=search.router, tags=["검색"])
+router.include_router(router=inquiry.router, tags=["고객문의"])
+router.include_router(router=notice.router, tags=["공지사항 및 자료실"])
+router.include_router(router=history.router, tags=["연혁"])
+router.include_router(router=delivery.router, tags=["납품실적"])
+router.include_router(router=certification.router, tags=["인증"])

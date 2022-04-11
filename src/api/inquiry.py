@@ -5,10 +5,13 @@ from fastapi.responses import JSONResponse
 from src.crud import inquiry_crud
 from src.schema import CreateInquiry
 
+SINGLE_PREFIX = "/inquiry"
+PLURAL_PREFIX = "/inquiries"
+
 router = APIRouter()
 
 
-@router.get("/{inquiry_id}")
+@router.get(SINGLE_PREFIX + "{inquiry_id}")
 async def get_inquiry(request: Request, inquiry_id: str):
     try:
         if result := await inquiry_crud.get_one(
@@ -36,7 +39,7 @@ async def get_inquiry(request: Request, inquiry_id: str):
         )
 
 
-@router.get("s")
+@router.get(PLURAL_PREFIX)
 async def get_inquries(
     request: Request,
     skip: int | None = Query(default=0),
@@ -63,7 +66,7 @@ async def get_inquries(
         )
 
 
-@router.post("")
+@router.post(SINGLE_PREFIX)
 async def create_inquiry(
     request: Request, insert_data: CreateInquiry
 ) -> JSONResponse:

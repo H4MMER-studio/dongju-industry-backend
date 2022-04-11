@@ -3,22 +3,41 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.4.4
   python: circleci/python@1.4.0
+  aws-cli: circleci/aws-cli@2.0.6
 
 commands:
-  notify_slack_error:
+  aws_put_parameters:
     steps:
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-
+      - run:
+          name: Put staging level environment of application
+          command: |
+            aws ssm put-parameter \
+              --name "LEVEL" \
+              --type "String" \
+              --value ${LEVEL} \
+              --overwrite
+      - run:
+          name: Put Database URL of application
+          command: |
+            aws ssm put-parameter \
+              --name "PRODUCT_DB_URL" \
+              --type "String" \
+              --value ${PRODUCT_DB_URL} \
+              --overwrite
   notify_slack_pass:
     steps:
       - slack/notify:
           event: pass
           template: basic_success_1
 
+  notify_slack_error:
+    steps:
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
 jobs:
-  build-and-test:
+  ci-cd:
     docker:
       - image: "cimg/python:3.10"
     steps:
@@ -26,16 +45,27 @@ jobs:
       - python/install-packages:
           pkg-manager: poetry
       - run:
-          name: Run tests
+          name: Run Tests
           command: poetry run pytest --version
+      - aws-cli/setup
+      - aws_put_parameters
+      - run:
+          name: Deploy with AWS CodeDeploy
+          command: |
+            aws deploy create-deployment \
+              --application-name ${CODE_DEPLOY_APPLICATION_NAME} \
+              --deployment-group-name ${CODE_DEPLOY_GROUP_NAME} \
+              --deployment-config-name ${CODE_DEPLOY_CONFIG_NAME} \
+              --github-location repository=${GITHUB_REPOSITORY},commitId=${CIRCLE_SHA1}
       - notify_slack_error
       - notify_slack_pass
 
 workflows:
   deploy:
     jobs:
-      - build-and-test:
-          context: backend-slack-secrets
+      - ci-cd:
+          context:
+            - backend-slack-secrets
           filters:
             branches:
               only: main

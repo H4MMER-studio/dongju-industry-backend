@@ -5,15 +5,25 @@ from fastapi.responses import JSONResponse
 from src.crud import delivery_crud
 from src.schema import CreateDelivery, UpdateDelivery
 
+SINGLE_PREFIX = "/delivery"
+PLURAL_PREFIX = "/deliveries"
+
 router = APIRouter()
 
 
-@router.get("s")
+@router.get(PLURAL_PREFIX)
 async def get_deliveries(
     request: Request,
-    skip: int | None = Query(default=0),
-    limit: int | None = Query(default=0),
-    sort: list[str] = Query(default=["deliver-date asc"]),
+    skip: int = Query(default=0),
+    limit: int = Query(default=0),
+    sort: list[str] = Query(
+        default=[
+            "delivery-year asc",
+            "delivery-month asc",
+            "delivery-reference asc",
+            "delivery-amount asc",
+        ]
+    ),
 ) -> JSONResponse:
     try:
         if result := await delivery_crud.get_multi(
@@ -35,12 +45,12 @@ async def get_deliveries(
         )
 
 
-@router.post("")
+@router.post(SINGLE_PREFIX)
 async def create_delivery(
     request: Request, insert_data: CreateDelivery
 ) -> JSONResponse:
     try:
-        await delivery_crud.create(reqeust=request, insert_data=insert_data)
+        await delivery_crud.create(request=request, insert_data=insert_data)
 
         return JSONResponse(
             content={"detail": "Success"}, status_code=status.HTTP_200_OK
@@ -53,7 +63,7 @@ async def create_delivery(
         )
 
 
-@router.patch("/{delivery_id}")
+@router.patch(SINGLE_PREFIX + "/{delivery_id}")
 async def update_delivery_partialy(
     request: Request, delivery_id: str, update_data: UpdateDelivery
 ) -> JSONResponse:
@@ -83,7 +93,7 @@ async def update_delivery_partialy(
         )
 
 
-@router.delete("/{delivery_id}")
+@router.delete(SINGLE_PREFIX + "/{delivery_id}")
 async def delete_delivery(request: Request, delivery_id: str) -> JSONResponse:
     try:
         if await delivery_crud.delete(request=request, id=delivery_id):

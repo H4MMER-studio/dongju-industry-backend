@@ -28,8 +28,17 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         skip: int,
         limit: int,
         sort: list[str] | None,
+        filter: dict | None = None,
     ) -> list[dict] | None:
-        query = request.app.db[self.collection].find()
+        if filter:
+            filter_field = {
+                key: {"$regex": value, "$options": "i"}
+                for key, value in filter.items()
+            }
+        else:
+            filter_field = {}
+
+        query = request.app.db[self.collection].find(filter_field)
 
         if sort:
             sort_field = []
