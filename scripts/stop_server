@@ -1,6 +1,6 @@
 # !/bin/bash
 
-cd /home/ubuntu/build
+cd /home/ubuntu/build/dongju-industry-backend
 rm -rf ./dongju-industry
 
 SERVER=`lsof -i :80 -sTCP:LISTEN -t`
