@@ -1,17 +1,30 @@
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Body, Query, Request, status
 from fastapi.responses import JSONResponse
+
+from src.crud import CRUDBase
 
 SINGLE_PREFIX = "/search"
 
 router = APIRouter(prefix=SINGLE_PREFIX)
 
 
-@router.get("")
-async def search(request: Request) -> JSONResponse:
+@router.get("/{collection}")
+async def search(
+    request: Request,
+    collection: str,
+    skip: int = Query(default=0),
+    limit: int = Query(default=0),
+    sort: list[str] = Query(default=None),
+    filter: dict = Body(...),
+) -> JSONResponse:
     try:
-        if ...:
+        search_crud = CRUDBase(collection=collection)
+
+        if result := await search_crud.get_multi(
+            request=request, skip=skip, limit=limit, sort=sort, filter=filter
+        ):
             return JSONResponse(
-                content={"data": ...}, status_code=status.HTTP_200_OK
+                content={"data": result}, status_code=status.HTTP_200_OK
             )
 
         else:

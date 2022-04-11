@@ -1,3 +1,4 @@
+from src.crud.base import CRUDBase
 from src.crud.certification import certification_crud
 from src.crud.delivery import delivery_crud
 from src.crud.file import file_crud
