@@ -1,7 +1,6 @@
 # !/bin/bash
 
 cd /home/ubuntu/build/dongju-industry-backend
-
 aws ssm get-parameters --name "LEVEL" "DB_NAME" "PRODUCT_DB_URL" "PRODUCT_AWS_S3_BUCKET_NAME" "PRODUCT_AWS_ACCESS_KEY_ID" "PRODUCT_AWS_SECRET_AWS_KEY" > env.json
 jq -jr '.Parameters[]|.Name, "=", .Value, "\n"' < env.json >> .env
 poetry install
