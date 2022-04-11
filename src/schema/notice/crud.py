@@ -21,7 +21,7 @@ class NoticeBase(CRUDSchemaBase):
     notice_files: list[dict[str, str]] | None
 
 
-class CreateNotice(NoticeBase, CreateSchemaBase):
+class CreateNotice(CreateSchemaBase, NoticeBase):
     notice_type: NoticeType
     notice_title: str
     notice_content: str
@@ -30,6 +30,6 @@ class CreateNotice(NoticeBase, CreateSchemaBase):
         schema_extra: dict[str, dict] = {"example": {}}
 
 
-class UpdateNotice(NoticeBase, UpdateSchemaBase):
+class UpdateNotice(UpdateSchemaBase, NoticeBase):
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}

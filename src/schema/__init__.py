@@ -1,4 +1,8 @@
-from src.schema.certification import CreateCertification, UpdateCertification
+from src.schema.certification import (
+    CertificationType,
+    CreateCertification,
+    UpdateCertification,
+)
 from src.schema.delivery import CreateDelivery, UpdateDelivery
 from src.schema.history import CreateHistory, UpdateHistory
 from src.schema.inquiry import CreateInquiry, UpdateInquiry

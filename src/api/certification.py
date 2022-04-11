@@ -4,7 +4,11 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
 from src.crud import certification_crud
-from src.schema import CreateCertification, UpdateCertification
+from src.schema import (
+    CertificationType,
+    CreateCertification,
+    UpdateCertification,
+)
 from src.util import parse_formdata
 
 SINGLE_PREFIX = "/certification"
@@ -43,16 +47,22 @@ async def get_certification(
         )
 
 
-@router.get("s")
+@router.get("s/{certification_type}")
 async def get_certifications(
     request: Request,
     skip: int = Query(default=0),
     limit: int = Query(default=0),
+    filter: CertificationType = Query(...),
     sort: list[str] = Query(default=["certification-date asc"]),
 ) -> JSONResponse:
     try:
+        filter_filed = {"certification_type": filter.value}
         if result := await certification_crud.get_multi(
-            request=request, skip=skip, limit=limit, sort=sort
+            request=request,
+            skip=skip,
+            limit=limit,
+            sort=sort,
+            filter=filter_filed,
         ):
             return JSONResponse(
                 content={"data": result}, status_code=status.HTTP_200_OK

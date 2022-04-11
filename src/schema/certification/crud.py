@@ -4,10 +4,10 @@ from src.schema.crud import CreateSchemaBase, CRUDSchemaBase, UpdateSchemaBase
 
 
 class CertificationType(str, Enum):
-    LICENSE = "등록증"
-    CERTIFICATION = "주요 인증"
-    PATENT = "특허증"
-    TEST_RESULT = "시험성적서"
+    LICENSE = "license"
+    CERTIFICATION = "certification"
+    PATENT = "patent"
+    TEST_RESULT = "test-result"
 
 
 class CertificationBase(CRUDSchemaBase):
@@ -19,7 +19,7 @@ class CertificationBase(CRUDSchemaBase):
     certification_images: list[dict[str, str]] | None
 
 
-class CreateCertification(CertificationBase, CreateSchemaBase):
+class CreateCertification(CreateSchemaBase, CertificationBase):
     certification_type: CertificationType
     certification_title: str
     certification_images: list[dict[str, str]]
@@ -28,6 +28,6 @@ class CreateCertification(CertificationBase, CreateSchemaBase):
         schema_extra: dict[str, dict] = {"example": {}}
 
 
-class UpdateCertification(CertificationBase, UpdateSchemaBase):
+class UpdateCertification(UpdateSchemaBase, CertificationBase):
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}

@@ -7,7 +7,7 @@ class HistoryBase(CRUDSchemaBase):
     history_content: str | None
 
 
-class CreateHistory(HistoryBase, CreateSchemaBase):
+class CreateHistory(CreateSchemaBase, HistoryBase):
     history_year: int
     history_month: int
     history_content: str
@@ -16,7 +16,7 @@ class CreateHistory(HistoryBase, CreateSchemaBase):
         schema_extra: dict[str, dict] = {"example": {}}
 
 
-class UpdateHistory(HistoryBase, UpdateSchemaBase):
+class UpdateHistory(UpdateSchemaBase, HistoryBase):
     history_id: str
 
     class Config:

@@ -10,7 +10,7 @@ class DeliveryBase(CRUDSchemaBase):
     delivery_reference: str | None
 
 
-class CreateDelivery(DeliveryBase, CreateSchemaBase):
+class CreateDelivery(CreateSchemaBase, DeliveryBase):
     delivery_supplier: str
     delivery_product: str
     delivery_amount: int
@@ -20,6 +20,6 @@ class CreateDelivery(DeliveryBase, CreateSchemaBase):
         schema_extra: dict[str, dict] = {"example": {}}
 
 
-class UpdateDelivery(DeliveryBase, UpdateSchemaBase):
+class UpdateDelivery(UpdateSchemaBase, DeliveryBase):
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}

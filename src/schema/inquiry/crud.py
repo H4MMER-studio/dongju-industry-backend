@@ -6,12 +6,11 @@ from src.schema.crud import CreateSchemaBase, CRUDSchemaBase, UpdateSchemaBase
 
 
 class Product(Enum):
-    """
-    To Do
-    - 제품의 경우 Enum 객체로 저장할 것인지 고민
-    """
-
-    pass
+    "air-conditioner"
+    "freeze-protection-damper-coil"
+    "exhaust-unit"
+    "bubble-damper"
+    "fully-sealed-door"
 
 
 class InquiryBase(CRUDSchemaBase):

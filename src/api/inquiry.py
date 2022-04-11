@@ -11,7 +11,7 @@ PLURAL_PREFIX = "/inquiries"
 router = APIRouter()
 
 
-@router.get(SINGLE_PREFIX + "{inquiry_id}")
+@router.get(SINGLE_PREFIX + "/{inquiry_id}")
 async def get_inquiry(request: Request, inquiry_id: str):
     try:
         if result := await inquiry_crud.get_one(
