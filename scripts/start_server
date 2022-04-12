@@ -4,6 +4,8 @@ cd /home/ubuntu/build/dongju-industry-backend
 sudo aws ssm get-parameters --name "LEVEL" "DB_NAME" "PRODUCT_DB_URL" "PRODUCT_AWS_S3_BUCKET_NAME" "PRODUCT_AWS_ACCESS_KEY_ID" "PRODUCT_AWS_SECRET_ACCESS_KEY" > env.json
 sudo jq -jr '.Parameters[]|.Name, "=", .Value, "\n"' < env.json >> .env
 
+curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python3
+
 poetry --version
 poetry install
 poetry run gunicorn --access-logfile /home/ubuntu/logs/access --error-logfile /home/ubuntu/logs/error --log-level 'debug' -k uvicorn.workers.UvicornWorker src.main:app --bind 0.0.0.0:80 --workers 2 --daemon
