@@ -50,9 +50,9 @@ async def get_certification(
 @router.get("s/{certification_type}")
 async def get_certifications(
     request: Request,
+    filter: CertificationType,
     skip: int = Query(default=0),
     limit: int = Query(default=0),
-    filter: CertificationType = Query(...),
     sort: list[str] = Query(default=["certification-date asc"]),
 ) -> JSONResponse:
     try:
