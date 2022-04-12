@@ -1,6 +1,6 @@
 # !/bin/bash
 
-cd /home/ubuntu/build/dongju-industry-backend
+cd /home/ubuntu/build/
 rm -rf ./dongju-industry
 SERVER=`lsof -i :80 -sTCP:LISTEN -t`
 if ["$SERVER"] ; then pkill gunicorn; fi
