@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 permissions:
-  - object: /home/ubuntu/build/
+  - object: /home/ubuntu
     mode: 755
     owner: root
     type:
