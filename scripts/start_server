@@ -7,6 +7,7 @@ jq -jr '.Parameters[]|.Name, "=", .Value, "\n"' < env.json >> .env
 whoami
 pwd
 
+sudo su
 source $HOME/.poetry/env
 
 poetry --version
