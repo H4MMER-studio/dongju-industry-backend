@@ -6,6 +6,7 @@ sudo jq -jr '.Parameters[]|.Name, "=", .Value, "\n"' < env.json >> .env
 
 curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python3
 
+whoami
 poetry --version
 poetry install
 poetry run gunicorn --access-logfile /home/ubuntu/logs/access --error-logfile /home/ubuntu/logs/error --log-level 'debug' -k uvicorn.workers.UvicornWorker src.main:app --bind 0.0.0.0:80 --workers 2 --daemon
