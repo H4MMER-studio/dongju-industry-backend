@@ -8,7 +8,7 @@ whoami
 pwd
 
 sudo su
-source $HOME/.poetry/env
+source /home/ubuntu/.poetry/env
 
 poetry --version
 poetry install
