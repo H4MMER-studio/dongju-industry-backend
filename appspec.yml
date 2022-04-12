@@ -3,7 +3,7 @@ os: linux
 permissions:
   - object: /home/ubuntu/build/
     mode: 755
-    owner: root
+    owner: ubuntu
     type:
       - directory
 hooks:
