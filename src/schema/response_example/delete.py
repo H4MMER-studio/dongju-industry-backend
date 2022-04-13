@@ -15,7 +15,7 @@ delete_response = {
         "description": "유효하지 않은 형태의 ObjectId 요청",
         "content": {
             "application/json": {
-                "example": {"detail": "ObjectId 1234 Invalid"}
+                "example": {"detail": "'62541f20ac27' is not a valid ObjectId, it must be a 12-byte input or a 24-character hex string"}
             }
         },
     },

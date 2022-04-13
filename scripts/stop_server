@@ -1,10 +1,6 @@
 # !/bin/bash
 
 cd /home/ubuntu/build/
-
-whoami
-pwd
-
 rm -rf ./dongju-industry-backend
 
 SERVER=`lsof -i :80 -sTCP:LISTEN -t`

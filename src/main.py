@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
 
 from src.api import router
@@ -25,6 +26,20 @@ async def connect_db():
 async def close_db():
     app.db_client.close()
 
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost:5500",
+    "https://dongjuind.co.kr",
+    "https://admin.dongjuind.co.kr",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)

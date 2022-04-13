@@ -1,8 +1,4 @@
 # !/bin/bash
 
-whoami
-
 cd /home/ubuntu/build
 git clone https://github.com/H4MMER-studio/dongju-industry-backend.git
-
-sudo su

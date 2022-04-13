@@ -17,7 +17,16 @@ class CreateDelivery(CreateSchemaBase, DeliveryBase):
     delivery_year: int
 
     class Config:
-        schema_extra: dict[str, dict] = {"example": {}}
+        schema_extra: dict[str, dict] = {
+            "example": {
+                "delivery_supplier": "(주)세진에스.이",
+                "delivery_product": "COOK FAN",
+                "delivery_amount": 3,
+                "delivery_year": 2012,
+                "delivery_month": 2,
+                "delivery_reference": "연세대학교",
+            },
+        }
 
 
 class UpdateDelivery(UpdateSchemaBase, DeliveryBase):
