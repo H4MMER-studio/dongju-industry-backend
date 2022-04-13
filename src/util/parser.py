@@ -31,12 +31,17 @@ async def parse_formdata(
 
         uploaded_files = await file_crud.upload(files=files)
 
-        if (file_type := uploaded_files[0]["type"]) == "image":
-            file_field = f"{collection_name}_{file_type}s"
-        else:
-            file_field = f"{collection_name}_files"
+        for uploaded_file in uploaded_files:
+            if (file_type := uploaded_file.pop("type")) == "image":
+                file_field = f"{collection_name}_{file_type}s"
+            else:
+                file_field = f"{collection_name}_files"
 
-        fields[file_field] = uploaded_files
+            if file_field in fields:
+                fields[file_field].append(uploaded_file)
+            else:
+                fields[file_field] = [uploaded_file]
+
         insert_data = create_schema(**fields)
 
         return insert_data

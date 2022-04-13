@@ -69,9 +69,9 @@ async def get_certifications(
     limit: int
     | None = Query(default=None, desciption="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
-        default=["certification-date asc"],
+        default=["certification-start-date asc", "certificatoin-title asc"],
         description="정렬 기준",
-        example=["certification-date asc"],
+        example=["certification-start-date asc", "certificatoin-title asc"],
     ),
 ) -> JSONResponse:
     """

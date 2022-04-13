@@ -16,7 +16,7 @@ get_notice_response = {
                         "notice_title": "댐퍼코일 자료입니다.",
                         "notice_content": "댐퍼코일 관련 자료 올려드립니다. 문의사항은 고객문의 페이지를 이용해주세요.",
                         "notice_files": [
-                            {"name": "", "url": "", "type": "others"}
+                            {"name": "", "url": "",}
                         ],
                     }
                 }

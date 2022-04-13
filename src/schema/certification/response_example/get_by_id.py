@@ -18,8 +18,8 @@ get_certification_response = {
                         "certification_date": "2012. 09. 04 - 2012. 09. 21",
                         "certification_organization": "한국기계전자시험연구원",
                         "certification_images": [
-                            {"name": "", "url": "", "type": "image"},
-                            {"name": "", "url": "", "type": "image"},
+                            {"name": "", "url": "",},
+                            {"name": "", "url": "",},
                         ],
                     }
                 }

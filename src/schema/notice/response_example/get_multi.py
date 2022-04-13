@@ -16,8 +16,12 @@ get_notices_response = {
                             "notice_type": "archive",
                             "notice_title": "댐퍼코일 자료입니다.",
                             "notice_content": "댐퍼코일 관련 자료 올려드립니다. 문의사항은 고객문의 페이지를 이용해주세요.",
+                            "notice_images": [
+                                {"name": "", "url": ""},
+                                {"name": "", "url": ""}
+                            ],
                             "notice_files": [
-                                {"name": "", "url": "", "type": "others"}
+                                {"name": "", "url": ""}
                             ],
                         },
                         {
@@ -28,9 +32,10 @@ get_notices_response = {
                             "notice_type": "archive",
                             "notice_title": "댐퍼코일 설치사진 및 규격 자료입니다.",
                             "notice_content": "댐퍼코일 실제 설치사진과 각각의 규격 자료 첨부해드립니다. 더 자세한 사항은 고객문의 페이지를 이용해주세요.",
+                            "notice_images": "null",
                             "notice_files": [
-                                {"name": "", "url": "", "type": "others"},
-                                {"name": "", "url": "", "type": "image"},
+                                {"name": "", "url": "",},
+                                {"name": "", "url": "",},
                             ],
                         },
                     ],

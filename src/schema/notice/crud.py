@@ -13,6 +13,7 @@ class NoticeBase(CRUDSchemaBase):
     notice_title: str | None
     notice_content: str | None
     notice_files: list[dict[str, str]] | None
+    notice_images: list[dict[str, str]] | None
 
 
 class CreateNotice(CreateSchemaBase, NoticeBase):

@@ -10,21 +10,20 @@ get_certifications_response = {
                 "created_at": "2022-04-07T01:00:12.819961+09:00",
                 "updated_at": "null",
                 "deleted_at": "null",
-                "certification_type": "test-results",
+                "certification_type": "test-result",
                 "certification_title": "버블 댐퍼",
                 "certification_content": "null",
-                "certification_date": "2012. 09. 04 - 2012. 09. 21",
+                "certification_start_date": "2021-02-02",
+                "certification_end_date": "null",
                 "certification_organization": "한국기계전자시험연구원",
                 "certification_images": [
                     {
                         "name": "",
                         "url": "",
-                        "type": "image"
                     },
                     {
                         "name": "",
                         "url": "",
-                        "type": "image"
                     }
                 ]
             },
@@ -33,16 +32,16 @@ get_certifications_response = {
                 "created_at": "2022-04-07T01:00:12.819961+09:00",
                 "updated_at": "null",
                 "deleted_at": "null",
-                "certification_type": "test",
+                "certification_type": "test-result",
                 "certification_title": "배기 유니트",
                 "certification_content": "null",
-                "certification_date": "2015. 03. 23",
+                "certification_start_date": "2015-03-24",
+                "certification_end_date": "2015-03-26",
                 "certification_organization": "(주)한국필터시험원",
                 "certification_images": [
                     {
                         "name": "",
                         "url": "",
-                        "type": "image"
                     }
                 ]
             },
@@ -51,21 +50,20 @@ get_certifications_response = {
                 "created_at": "2022-04-07T01:00:12.819961+09:00",
                 "updated_at": "null",
                 "deleted_at": "null",
-                "certification_type": "test-results",
+                "certification_type": "test-result",
                 "certification_title": "배기 유니트",
                 "certification_content": "null",
-                "certification_date": "2016. 03. 23",
+                "certification_start_date": "2015-01-20",
+                "certification_end_date": "2015-02-26",
                 "certification_organization": "(주)한국필터시험원",
                 "certification_images": [
                     {
                         "name": "",
                         "url": "",
-                        "type": "image"
                     },
                     {
                         "name": "",
                         "url": "",
-                        "type": "image"
                     }
                 ]
             },
@@ -89,12 +87,12 @@ get_certifications_response = {
                             "query",
                             "value"
                         ],
-                        "msg": "value is not a valid enumeration member; permitted: 'license', 'certification', 'patent', 'test-result'",
+                        "msg": "value is not a valid enumeration member; permitted: 'license', 'core-certification', 'patent', 'test-result'",
                         "type": "type_error.enum",
                         "ctx": {
                             "enum_values": [
                                     "license",
-                                    "certification",
+                                    "core-certification",
                                     "patent",
                                     "test-result"
                                 ]
