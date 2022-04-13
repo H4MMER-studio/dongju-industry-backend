@@ -1,6 +1,6 @@
 from src.schema.response import ErrorResponseModel, GetResponseModel
 
-get_certification_response = {
+get_notice_response = {
     "200": {
         "model": GetResponseModel,
         "description": "성공",
@@ -8,18 +8,15 @@ get_certification_response = {
             "application/json": {
                 "example": {
                     "data": {
-                        "_id": "624db4e86a6b5d4406086417",
-                        "created_at": "2022-04-07T01:00:12.819961+09:00",
+                        "_id": "6256c0963d9f91b921c4b581",
+                        "created_at": "2022-04-13T21:20:25.651923+09:00",
                         "updated_at": "null",
                         "deleted_at": "null",
-                        "certification_type": "test-results",
-                        "certification_title": "버블 댐퍼",
-                        "certification_content": "null",
-                        "certification_date": "2012. 09. 04 - 2012. 09. 21",
-                        "certification_organization": "한국기계전자시험연구원",
-                        "certification_images": [
-                            {"name": "", "url": "", "type": "image"},
-                            {"name": "", "url": "", "type": "image"},
+                        "notice_type": "archive",
+                        "notice_title": "댐퍼코일 자료입니다.",
+                        "notice_content": "댐퍼코일 관련 자료 올려드립니다. 문의사항은 고객문의 페이지를 이용해주세요.",
+                        "notice_files": [
+                            {"name": "", "url": "", "type": "others"}
                         ],
                     }
                 }

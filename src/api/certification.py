@@ -75,15 +75,15 @@ async def get_certifications(
     """
     인증 종류별 다량 조회(GET) 엔드포인트
 
-    아래 한 개는 필수적으로 전달해야 하는 쿼리 파라미터(Path Parameter)
+    아래 한 개는 필수적으로 전달해야 하는 쿼리 파라미터(Query Parameter)
     1. value
 
     이때 그 값으로 인증종류(certification_type)를 전달한다.
     전달할 수 있는 인증종류는 아래와 같다.
     1. license : 등록증
     2. patent : 특허증
-    3. test-result : 시험성적서
-    4. certification : 주요 인증
+    3. test-result : 시험 성적서
+    4. core-certification : 주요 인증
 
     아래 세 개는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
     1. sort
@@ -139,7 +139,7 @@ async def create_certification(request: Request) -> JSONResponse:
     1. license : 등록증
     2. patent : 특허증
     3. test-result : 시험성적서
-    4. certification : 주요 인증
+    4. core-certification : 주요 인증
 
     아래 두 개는 선택적으로 전달할 수 있는 파일이 아닌 폼 데이터(Form Data)
     1. certification_content
@@ -166,6 +166,12 @@ async def create_certification(request: Request) -> JSONResponse:
         return JSONResponse(
             content={"detail": validation_error.errors()},
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
+    except ValueError as value_error:
+        return JSONResponse(
+            content={"detail": str(value_error)},
+            status_code=status.HTTP_400_BAD_REQUEST,
         )
 
     except Exception as error:

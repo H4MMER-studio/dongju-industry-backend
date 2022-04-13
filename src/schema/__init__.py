@@ -19,9 +19,16 @@ from src.schema.history import (
     get_histories_response,
 )
 from src.schema.inquiry import CreateInquiry, UpdateInquiry
-from src.schema.notice import CreateNotice, UpdateNotice
+from src.schema.notice import (
+    CreateNotice,
+    NoticeType,
+    UpdateNotice,
+    get_notice_response,
+    get_notices_response,
+)
 from src.schema.response_example import (
     create_response,
     delete_response,
     update_response,
 )
+from src.schema.search import SearchType, get_search_response

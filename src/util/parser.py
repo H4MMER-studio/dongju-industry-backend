@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from typing import TypeVar
 
 from fastapi import UploadFile
@@ -23,6 +24,8 @@ async def parse_formdata(
         for key, value in form_data.items():
             if re.match(r"(files\[[0-9]+\])", key):
                 files.append(value)
+            elif re.match(r"[\w]+\_date", key):
+                fields[key] = datetime.strptime(value, "%Y-%m-%d")
             else:
                 fields[key] = value
 

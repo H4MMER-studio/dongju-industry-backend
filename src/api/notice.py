@@ -4,7 +4,16 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
 from src.crud import notice_crud
-from src.schema import CreateNotice, UpdateNotice
+from src.schema import (
+    CreateNotice,
+    NoticeType,
+    UpdateNotice,
+    create_response,
+    delete_response,
+    get_notice_response,
+    get_notices_response,
+    update_response,
+)
 from src.util import parse_formdata
 
 SINGLE_PREFIX = "/notice"
@@ -12,8 +21,14 @@ SINGLE_PREFIX = "/notice"
 router = APIRouter(prefix=SINGLE_PREFIX)
 
 
-@router.get("/{notice_id}")
+@router.get("/{notice_id}", responses=get_notice_response)
 async def get_notice(request: Request, notice_id: str) -> JSONResponse:
+    """
+    공지 조회(GET) 엔드포인트
+
+    아래 한 개는 필수적으로 전달해야 하는 패스 파라미터(Path Parameter)
+    1. _id
+    """
     try:
         if result := await notice_crud.get_one(request=request, id=notice_id):
             return JSONResponse(
@@ -22,7 +37,7 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
 
         else:
             return JSONResponse(
-                content={"detail", "Not Found"},
+                content={"data", []},
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
@@ -39,16 +54,41 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
         )
 
 
-@router.get("s")
+@router.get("s", responses=get_notices_response)
 async def get_notices(
     request: Request,
+    value: NoticeType = Query(..., description="공지 종류", example="archive"),
     skip: int = Query(default=0),
     limit: int = Query(default=0),
     sort: list[str] = Query(default=["created-at asc"]),
 ) -> JSONResponse:
+    """
+    공지 종류별 다량 조회(GET) 엔드포인트
+
+    아래 한 개는 필수적으로 전달해야 하는 쿼리 파라미터(Query Parameter)
+    1. value
+
+    이때 그 값으로 공지종류(notice_type)를 전달한다.
+    전달할 수 있는 공지종류는 아래와 같다.
+    1. archive : 자료실
+    2. notification : 공지사항
+
+    아래 세 개는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
+    1. sort
+    2. skip
+    3. limit
+
+    이때 기본적으로 아래 기준으로 오름차순 정렬하여 결과를 반환한다.
+    1. 엔티티 생성일(created_at)
+    """
     try:
         if result := await notice_crud.get_multi(
-            request=request, skip=skip, limit=limit, sort=sort
+            request=request,
+            skip=skip,
+            limit=limit,
+            sort=sort,
+            filter_field="notice_type",
+            filter_value=value.value,
         ):
             return JSONResponse(
                 content={"data": result}, status_code=status.HTTP_200_OK
@@ -56,7 +96,7 @@ async def get_notices(
 
         else:
             return JSONResponse(
-                content={"detail": "Not Found"},
+                content={"data": []},
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
@@ -67,8 +107,28 @@ async def get_notices(
         )
 
 
-@router.post("")
+@router.post("", responses=create_response)
 async def create_notice(request: Request) -> JSONResponse:
+    """
+    공지 생성(POST) 엔드포인트
+    이때 헤더는 application/form-data로 보낸다.
+
+    아래는 선택적으로 전달할 수 있는 파일 폼 데이터(Form Data)
+    1. files[0]
+
+    이때 다수의 파일을 보낼 경우 아래와 같이 넘버링하여 보낸다.
+    1. files[0]
+    2. files[1]
+
+    아래 두 개는 필수적으로 전달해야 하는 파일이 아닌 폼 데이터(Form Data)
+    1. notice_type
+    2. notice_title
+    3. notice_content
+
+    이때 전달할 수 있는 공지종류(notice_type)는 아래와 같다.
+    1. archive : 자료실
+    2. notification : 공지사항
+    """
     try:
         form_data = await request.form()
         insert_data = await parse_formdata(
@@ -96,10 +156,16 @@ async def create_notice(request: Request) -> JSONResponse:
         )
 
 
-@router.patch("/{notice_id}")
+@router.patch("/{notice_id}", responses=update_response)
 async def update_notice_partialy(
     request: Request, notice_id: str, update_data: UpdateNotice
 ) -> JSONResponse:
+    """
+    공지 수정(PATCH) 엔드포인트
+
+    아래 한 개는 필수적으로 전달해야 하는 패스 파라미터(Path Parameter)
+    1. _id
+    """
     try:
         if await notice_crud.update(
             request=request, id=notice_id, update_data=update_data
@@ -126,8 +192,14 @@ async def update_notice_partialy(
         )
 
 
-@router.delete("/{notice_id}")
+@router.delete("/{notice_id}", responses=delete_response)
 async def delete_notice(request: Request, notice_id: str) -> JSONResponse:
+    """
+    공지 삭제(DELETE) 엔드포인트
+
+    아래 한 개는 필수적으로 전달해야 하는 패스 파라미터(Path Parameter)
+    1. _id
+    """
     try:
         if await notice_crud.delete(request=request, id=notice_id):
             return JSONResponse(

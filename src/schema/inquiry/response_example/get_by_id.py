@@ -1,6 +1,6 @@
 from src.schema.response import ErrorResponseModel, GetResponseModel
 
-get_certification_response = {
+get_inquiry_response = {
     "200": {
         "model": GetResponseModel,
         "description": "성공",
@@ -8,19 +8,19 @@ get_certification_response = {
             "application/json": {
                 "example": {
                     "data": {
-                        "_id": "624db4e86a6b5d4406086417",
-                        "created_at": "2022-04-07T01:00:12.819961+09:00",
+                        "_id": "6256d2a5ff5d327127a21319",
+                        "created_at": "null",
                         "updated_at": "null",
                         "deleted_at": "null",
-                        "certification_type": "test-results",
-                        "certification_title": "버블 댐퍼",
-                        "certification_content": "null",
-                        "certification_date": "2012. 09. 04 - 2012. 09. 21",
-                        "certification_organization": "한국기계전자시험연구원",
-                        "certification_images": [
-                            {"name": "", "url": "", "type": "image"},
-                            {"name": "", "url": "", "type": "image"},
-                        ],
+                        "inquiry_type": "estimate",
+                        "inquiry_title": "안녕하세요. 댐퍼 코일 견적 관련 문의입니다.",
+                        "inquiry_email": "H4MMER@naver.com",
+                        "inquiry_person_name": "김해머",
+                        "inquiry_company_name": "해머스튜디오",
+                        "inquiry_product_type": "freeze-protection-damper-coil",
+                        "inquiry_phone_number": "010-1234-5678",
+                        "inquiry_content": "안녕하세요. 댐퍼 코일 견적을 좀 여쭤보고 싶은데 저희 회사 실험실에 사용할 예정입니다.",
+                        "inquiry_resolved_status": False,
                     }
                 }
             }
