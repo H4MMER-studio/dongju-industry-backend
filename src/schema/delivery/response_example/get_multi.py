@@ -1,4 +1,4 @@
-from src.schema.response import ErrorResponseModel, GetResponseModel
+from src.schema.response import GetResponseModel
 
 get_deliveries_response = {
     "200": {
@@ -8,8 +8,8 @@ get_deliveries_response = {
         {
             "_id": "62542226f3dfe27c2294b6fd",
             "created_at": "2022-04-11T21:40:24.055982+09:00",
-            "updated_at": None,
-            "deleted_at": None,
+            "updated_at": "null",
+            "deleted_at": "null",
             "delivery_supplier": "(주)세진에스.이",
             "delivery_product": "COOK FAN",
             "delivery_amount": 3,
@@ -20,8 +20,8 @@ get_deliveries_response = {
         {
             "_id": "62542205f3dfe27c2294b6fc",
             "created_at": "2022-04-11T21:40:24.055982+09:00",
-            "updated_at": None,
-            "deleted_at": None,
+            "updated_at": "null",
+            "deleted_at": "null",
             "delivery_supplier": "(주)웃샘",
             "delivery_product": "AHU 외",
             "delivery_amount": 1,
@@ -34,22 +34,5 @@ get_deliveries_response = {
         "model": GetResponseModel,
         "description": "존재하지 않는 엔티티",
         "content": {"application/json": {"example": {"data": []}}},
-    },
-    "422": {
-        "model": ErrorResponseModel,
-        "description": "유효하지 않은 매개변수 사용",
-        "content": {
-            "application/json": {
-                "example": {
-                    "detail": [
-                        {
-                            "loc": ["query", "skip"],
-                            "msg": "field required",
-                            "type": "value_error.missing",
-                        }
-                    ]
-                }
-            }
-        },
     },
 }

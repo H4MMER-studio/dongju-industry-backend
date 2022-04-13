@@ -35,12 +35,16 @@ async def get_deliveries(
     """
     납품실적 다량 조회(GET) 엔드포인트
 
-    아래 세 개의 매개변수는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
+    아래 세 개는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
     1. sort
     2. skip
     3. limit
 
-    이때 기본적으로 납품연도, 납품월, 납품처, 납품량 순서로 오름차순 정렬하여 결과를 반환한다.
+    이때 기본적으로 아래 순서를 기준으로 오름차순 정렬하여 결과를 반환한다.
+    1. 납품연도(delivery_year)
+    2. 납품월(delivery_month)
+    3. 납품처(delivery_supplier)
+    4. 납품량(delivery_amount)
     """
     try:
         if result := await delivery_crud.get_multi(
@@ -67,10 +71,9 @@ async def create_delivery(
     request: Request, insert_data: CreateDelivery
 ) -> JSONResponse:
     """
-    납품실적 생성(CREATE) 엔드포인트
+    납품실적 생성(POST) 엔드포인트
 
     아래 네 개는 필수적으로 전달해야 하는 바디 파라미터(Body Parameter)
-
     1. delivery_supplier
     2. delivery_product
     3. delivery_amount
@@ -101,7 +104,7 @@ async def update_delivery_partialy(
     """
     납품실적 수정(PATCH) 엔드포인트
 
-    아래 한 개는 필수적으로 전달해야하는 패스 파라미터(Path Parameter)
+    아래 한 개는 필수적으로 전달해야 하는 패스 파라미터(Path Parameter)
     1. _id
 
     아래 여섯 개는 선택적으로 전달할 수 있는 바디 마라미터(Body Parameter)
@@ -143,7 +146,7 @@ async def delete_delivery(request: Request, delivery_id: str) -> JSONResponse:
     """
     납품실적 삭제(DELETE) 엔드포인트
 
-    아래 한 개는 필수적으로 전달해야하는 패스 파라미터(Path Parameter)
+    아래 한 개는 필수적으로 전달해야 하는 패스 파라미터(Path Parameter)
     1. _id
     """
     try:

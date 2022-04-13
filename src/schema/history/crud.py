@@ -13,11 +13,14 @@ class CreateHistory(CreateSchemaBase, HistoryBase):
     history_content: str
 
     class Config:
-        schema_extra: dict[str, dict] = {"example": {}}
+        schema_extra: dict[str, dict] = {
+            "example": {
+                "history_year": 1999,
+                "history_month": 2,
+                "history_content": "동주산업 제 2공장 설립 (인천 가좌동 소재)",
+            }
+        }
 
 
 class UpdateHistory(UpdateSchemaBase, HistoryBase):
     history_id: str
-
-    class Config:
-        schema_extra: dict[str, dict] = {"example": {}}

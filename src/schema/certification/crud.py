@@ -24,9 +24,6 @@ class CreateCertification(CreateSchemaBase, CertificationBase):
     certification_title: str
     certification_images: list[dict[str, str]]
 
-    class Config:
-        schema_extra: dict[str, dict] = {"example": {}}
-
 
 class UpdateCertification(UpdateSchemaBase, CertificationBase):
     class Config:

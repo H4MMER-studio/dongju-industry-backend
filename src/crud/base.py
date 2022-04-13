@@ -27,19 +27,13 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         request: Request,
         skip: int,
         limit: int,
-        sort: list[str] | None,
-        filter: dict[str, str] | None = None,
+        sort: list[str],
+        filter_field: str | None = None,
+        filter_value: str | None = None,
     ) -> list[dict] | None:
-        # if filter is str:
-
-        # elif filter is dict:
-        #     filter_field = {
-        #         key: {"$regex": value, "$options": "i"}
-        #         for key, value in filter.items()
-        #     }
-
-        # else:
-        #     filter_field = {}
+        filter = {}
+        if filter_value:
+            filter[filter_field] = filter_value
 
         query = request.app.db[self.collection].find(filter)
 
@@ -123,7 +117,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
             else False
         )
 
-    async def bulK_delete(self, request: Request, ids: list[str]) -> bool:
+    async def bulk_delete(self, request: Request, ids: list[str]) -> bool:
         query: list[DeleteOne] = [
             DeleteOne({"_id": ObjectId(id)}) for id in ids
         ]
