@@ -33,7 +33,8 @@ get_notices_response = {
                                 {"name": "", "url": "", "type": "image"},
                             ],
                         },
-                    ]
+                    ],
+                    "size": 20,
                 }
             }
         },

@@ -9,7 +9,7 @@ get_inquiry_response = {
                 "example": {
                     "data": {
                         "_id": "6256d2a5ff5d327127a21319",
-                        "created_at": "null",
+                        "created_at": "2022-04-13T21:20:25.651923+09:00",
                         "updated_at": "null",
                         "deleted_at": "null",
                         "inquiry_type": "estimate",

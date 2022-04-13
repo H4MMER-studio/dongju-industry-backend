@@ -17,8 +17,10 @@ async def search(
     ),
     field: str = Query(..., description="", example=""),
     value: str = Query(..., description="", example=""),
-    skip: int = Query(default=0, description="페이지네이션 시작 값", example=0),
-    limit: int = Query(default=0, description="페이지네이션 종료 값", example=30),
+    skip: int
+    | None = Query(default=None, description="페이지네이션 시작 값", example=0),
+    limit: int
+    | None = Query(default=None, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
         default=["created-at asc"],
         description="정렬 기준",
@@ -60,7 +62,8 @@ async def search(
             filter_value=value,
         ):
             return JSONResponse(
-                content={"data": result}, status_code=status.HTTP_200_OK
+                content={"data": result["data"], "size": result["data_size"]},
+                status_code=status.HTTP_200_OK,
             )
 
         else:

@@ -33,7 +33,8 @@ class CRUDHistory(CRUDBase[CreateHistory, UpdateHistory]):
 
             query = query.sort(sort_field)
 
-        documents = await query.skip(skip).limit(limit).to_list(length=None)
+        documents = await query.to_list(length=None)
+        documents = documents[skip:limit]
 
         for document in documents:
             document["_id"] = str(document["_id"])

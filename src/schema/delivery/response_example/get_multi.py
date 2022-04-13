@@ -28,7 +28,9 @@ get_deliveries_response = {
             "delivery_year": 2012,
             "delivery_month": 2,
             "delivery_reference": "용인SD"
-        }]}}},
+        }],
+        "size": 20,
+        }}},
     },
     "404": {
         "model": GetResponseModel,

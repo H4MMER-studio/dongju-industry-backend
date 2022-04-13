@@ -25,12 +25,13 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
     async def get_multi(
         self,
         request: Request,
-        skip: int,
-        limit: int,
+        skip: int | None,
+        limit: int | None,
         sort: list[str],
         filter_field: str | None = None,
         filter_value: str | None = None,
-    ) -> list[dict] | None:
+    ) -> dict | None:
+        result = {}
         filter = {}
         if filter_value:
             filter[filter_field] = filter_value
@@ -56,12 +57,21 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
 
             query = query.sort(sort_field)
 
-        documents = await query.skip(skip).limit(limit).to_list(length=None)
+        documents = await query.to_list(length=None)
+
+        if not (data_size := len(documents)):
+            return None
+
+        if skip and limit:
+            documents = documents[skip : limit + 1]  # noqa
 
         for document in documents:
             document["_id"] = str(document["_id"])
 
-        return documents
+        result["data_size"] = data_size
+        result["data"] = documents
+
+        return result
 
     async def create(
         self, request: Request, insert_data: CreateSchema

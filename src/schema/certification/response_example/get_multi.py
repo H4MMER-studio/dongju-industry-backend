@@ -69,7 +69,9 @@ get_certifications_response = {
                     }
                 ]
             },
-        ]}}},
+        ],
+        "size": 4
+        }}},
     },
     "404": {
         "model": GetResponseModel,

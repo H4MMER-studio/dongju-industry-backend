@@ -31,7 +31,7 @@ class InquiryBase(CRUDSchemaBase):
     inquiry_resolved_status: bool = False
 
 
-class CreateInquiry(InquiryBase, CreateSchemaBase):
+class CreateInquiry(CreateSchemaBase, InquiryBase):
     inquiry_type: InquiryType
     inquiry_product_type: ProductType
     inquiry_title: str
@@ -56,6 +56,6 @@ class CreateInquiry(InquiryBase, CreateSchemaBase):
         }
 
 
-class UpdateInquiry(InquiryBase, UpdateSchemaBase):
+class UpdateInquiry(UpdateSchemaBase, InquiryBase):
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}

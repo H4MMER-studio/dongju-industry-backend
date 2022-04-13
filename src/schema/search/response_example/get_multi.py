@@ -44,7 +44,8 @@ get_search_response = {
                             "delivery_month": 4,
                             "delivery_reference": "고려대",
                         },
-                    ]
+                    ],
+                    "size": 20,
                 }
             }
         },

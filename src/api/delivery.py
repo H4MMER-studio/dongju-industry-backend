@@ -21,15 +21,19 @@ router = APIRouter()
 @router.get(PLURAL_PREFIX, responses=get_deliveries_response)
 async def get_deliveries(
     request: Request,
-    skip: int = Query(default=0),
-    limit: int = Query(default=0),
+    skip: int
+    | None = Query(default=None, description="페이지네이션 시작 값", example=1),
+    limit: int
+    | None = Query(default=None, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
         default=[
             "delivery-year asc",
             "delivery-month asc",
             "delivery-supplier asc",
             "delivery-amount asc",
-        ]
+        ],
+        description="정렬 기준",
+        example=["delivery-year desc", "delivery-month desc"],
     ),
 ) -> JSONResponse:
     """
@@ -51,7 +55,8 @@ async def get_deliveries(
             request=request, skip=skip, limit=limit, sort=sort
         ):
             return JSONResponse(
-                content={"data": result}, status_code=status.HTTP_200_OK
+                content={"data": result["data"], "size": result["data_size"]},
+                status_code=status.HTTP_200_OK,
             )
 
         else:

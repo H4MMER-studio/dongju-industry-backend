@@ -64,8 +64,10 @@ async def get_certifications(
     value: CertificationType = Query(
         ..., description="인증 종류", example="test-result"
     ),
-    skip: int = Query(default=0, description="페이지네이션 시작 값", example=0),
-    limit: int = Query(default=0, desciption="페이지네이션 종료 값", example=30),
+    skip: int
+    | None = Query(default=None, description="페이지네이션 시작 값", example=1),
+    limit: int
+    | None = Query(default=None, desciption="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
         default=["certification-date asc"],
         description="정렬 기준",
@@ -102,8 +104,10 @@ async def get_certifications(
             filter_field="certification_type",
             filter_value=value.value,
         ):
+            print(result)
             return JSONResponse(
-                content={"data": result}, status_code=status.HTTP_200_OK
+                content={"data": result["data"], "size": result["data_size"]},
+                status_code=status.HTTP_200_OK,
             )
 
         else:

@@ -58,9 +58,15 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
 async def get_notices(
     request: Request,
     value: NoticeType = Query(..., description="공지 종류", example="archive"),
-    skip: int = Query(default=0),
-    limit: int = Query(default=0),
-    sort: list[str] = Query(default=["created-at asc"]),
+    skip: int
+    | None = Query(default=None, description="페이지네이션 시작 값", example=1),
+    limit: int
+    | None = Query(default=None, description="페이지네이션 종료 값", example=30),
+    sort: list[str] = Query(
+        default=["created-at asc"],
+        description="정렬 기준",
+        example=["created-at asc"],
+    ),
 ) -> JSONResponse:
     """
     공지 종류별 다량 조회(GET) 엔드포인트
@@ -79,7 +85,7 @@ async def get_notices(
     3. limit
 
     이때 기본적으로 아래 기준으로 오름차순 정렬하여 결과를 반환한다.
-    1. 엔티티 생성일(created_at)
+    1. 엔티티 생성일자(created_at)
     """
     try:
         if result := await notice_crud.get_multi(
@@ -91,7 +97,8 @@ async def get_notices(
             filter_value=value.value,
         ):
             return JSONResponse(
-                content={"data": result}, status_code=status.HTTP_200_OK
+                content={"data": result["data"], "size": result["data_size"]},
+                status_code=status.HTTP_200_OK,
             )
 
         else:

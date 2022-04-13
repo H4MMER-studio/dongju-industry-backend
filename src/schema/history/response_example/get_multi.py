@@ -32,7 +32,9 @@ get_histories_response = {
                 "history_month": 5,
                 "history_content": "동주산업 설립 (서울, 시흥 소재)",
             }
-        ]}}},
+        ],
+        "size": 20,
+        }}},
     },
     "404": {
         "model": GetResponseModel,

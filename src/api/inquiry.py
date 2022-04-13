@@ -48,21 +48,34 @@ async def get_inquiry(request: Request, inquiry_id: str):
 @router.get(PLURAL_PREFIX)
 async def get_inquries(
     request: Request,
-    skip: int | None = Query(default=0),
-    limit: int | None = Query(default=0),
-    sort: list[str] = Query(default=["created-at asc"]),
+    skip: int
+    | None = Query(default=None, description="페이지네이션 시작 값", example=1),
+    limit: int
+    | None = Query(default=None, description="페이지네이션 종료 값", example=30),
+    sort: list[str] = Query(
+        default=["created-at desc"],
+        description="정렬 기준",
+        example=["created-at desc"],
+    ),
 ) -> JSONResponse:
     """
     고객문의 다량 조회(GET) 엔드포인트
 
+    아래 세 개는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
+    1. sort
+    2. skip
+    3. limit
 
+    이때 기본적으로 아래 순서를 기준으로 내림차순 정렬하여 결과를 반환한다.
+    1. 엔티티 생성일자(created_at)
     """
     try:
         if result := await inquiry_crud.get_multi(
             request=request, skip=skip, limit=limit, sort=sort
         ):
             return JSONResponse(
-                content={"data": result}, status_code=status.HTTP_200_OK
+                content={"data": result["data"], "size": result["data_size"]},
+                status_code=status.HTTP_200_OK,
             )
 
         else:
