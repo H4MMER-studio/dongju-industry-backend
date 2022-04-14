@@ -7,10 +7,15 @@ from src.schema import CreateHistory, UpdateHistory
 
 class CRUDHistory(CRUDBase[CreateHistory, UpdateHistory]):
     async def get_multi(
-        self, request: Request, skip: int, limit: int, sort: list[str]
-    ) -> list[dict[str, list[dict]]] | None:
-        result: list = []
+        self,
+        request: Request,
+        skip: int | None,
+        limit: int | None,
+        sort: list[str],
+    ) -> dict | None:
+        result: dict = {}
         temp: dict = {}
+        data: list = []
 
         query = request.app.db[self.collection].find()
 
@@ -34,7 +39,12 @@ class CRUDHistory(CRUDBase[CreateHistory, UpdateHistory]):
             query = query.sort(sort_field)
 
         documents = await query.to_list(length=None)
-        documents = documents[skip:limit]
+
+        if not (data_size := len(documents)):
+            return None
+
+        if skip and limit:
+            documents = documents[skip - 1 : limit + 1]  # noqa
 
         for document in documents:
             document["_id"] = str(document["_id"])
@@ -48,7 +58,10 @@ class CRUDHistory(CRUDBase[CreateHistory, UpdateHistory]):
                 temp[start_year] = [document]
 
         for start_year, value in temp.items():
-            result.append({"start_year": start_year, "value": value})
+            data.append({"start_year": start_year, "value": value})
+
+        result["data_size"] = data_size
+        result["data"] = data
 
         return result
 
