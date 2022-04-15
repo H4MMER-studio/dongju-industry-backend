@@ -63,9 +63,9 @@ async def get_notices(
     limit: int
     | None = Query(default=None, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
-        default=["created-at asc"],
+        default=["created-at desc"],
         description="정렬 기준",
-        example=["created-at asc"],
+        example=["created-at desc"],
     ),
 ) -> JSONResponse:
     """
@@ -84,7 +84,7 @@ async def get_notices(
     2. skip
     3. limit
 
-    이때 기본적으로 아래 기준으로 오름차순 정렬하여 결과를 반환한다.
+    이때 기본적으로 아래 기준으로 내림차순 정렬하여 결과를 반환한다.
     1. 엔티티 생성일자(created_at)
     """
     try:
