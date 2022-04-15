@@ -53,7 +53,7 @@ async def get_certification(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -104,7 +104,6 @@ async def get_certifications(
             filter_field="certification_type",
             filter_value=value.value,
         ):
-            print(result)
             return JSONResponse(
                 content={"data": result["data"], "size": result["data_size"]},
                 status_code=status.HTTP_200_OK,
@@ -117,7 +116,7 @@ async def get_certifications(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -147,14 +146,18 @@ async def create_certification(request: Request) -> JSONResponse:
 
     아래 두 개는 선택적으로 전달할 수 있는 파일이 아닌 폼 데이터(Form Data)
     1. certification_content
-    2. certification_date
-    3. certification_organization
+    2. certification_start_date
+    3. certification_end_date
+    4. certification_organization
+
+    이때 일자를 전달하는 형식은 아래와 같다.
+    - YYYY-mm-dd
     """
     try:
         form_data = await request.form()
         insert_data = await parse_formdata(
             form_data=form_data,
-            create_schema=CreateCertification,
+            schema=CreateCertification,
             collection_name="certification",
         )
 
@@ -180,22 +183,54 @@ async def create_certification(request: Request) -> JSONResponse:
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
 @router.patch("/{certification_id}", responses=update_response)
 async def update_certification_partialy(
-    request: Request, certification_id: str, update_data: UpdateCertification
+    request: Request, certification_id: str
 ) -> JSONResponse:
     """
     인증 수정(PATCH) 엔드포인트
+    이때 헤더는 application/form-data로 보낸다.
 
     아래 한 개는 필수적으로 전달해야 하는 패스 파라미터(Path Parameter)
     1. _id
+
+    아래 한 개는 선택적으로으로 전달할 수 있는 파일 폼 데이터(Form Data)
+    1. files[0]
+
+    이때 다수의 파일을 보낼 경우 아래와 같이 넘버링하여 보낸다.
+    1. files[0]
+    2. files[1]
+
+    아래는 선택적으로 전달할 수 있는 파일이 아닌 폼 데이터(Form Data)
+    1. certification_type
+    2. certification_title
+    3. certification_content
+    4. certification_start_date
+    5. certification_end_date
+    6. certification_organization
+
+    이때 전달할 수 있는 인증종류(certification_type)는 아래와 같다.
+    1. license : 등록증
+    2. patent : 특허증
+    3. test-result : 시험성적서
+    4. core-certification : 주요 인증
+
+    이때 일자를 전달하는 형식은 아래와 같다.
+    - YYYY-mm-dd
     """
     try:
+        form_data = await request.form()
+        update_data = await parse_formdata(
+            form_data=form_data,
+            schema=UpdateCertification,
+            collection_name="certification",
+        )
+
         if await certification_crud.update(
             request=request, id=certification_id, update_data=update_data
         ):
@@ -216,7 +251,7 @@ async def update_certification_partialy(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -252,6 +287,6 @@ async def delete_certification(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

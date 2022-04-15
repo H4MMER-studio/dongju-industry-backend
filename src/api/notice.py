@@ -49,7 +49,7 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -127,7 +127,7 @@ async def create_notice(request: Request) -> JSONResponse:
     1. files[0]
     2. files[1]
 
-    아래 두 개는 필수적으로 전달해야 하는 파일이 아닌 폼 데이터(Form Data)
+    아래 세 개는 필수적으로 전달해야 하는 파일이 아닌 폼 데이터(Form Data)
     1. notice_type
     2. notice_title
     3. notice_content
@@ -140,7 +140,7 @@ async def create_notice(request: Request) -> JSONResponse:
         form_data = await request.form()
         insert_data = await parse_formdata(
             form_data=form_data,
-            create_schema=CreateNotice,
+            schema=CreateNotice,
             collection_name="notice",
         )
 
@@ -158,22 +158,47 @@ async def create_notice(request: Request) -> JSONResponse:
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
 @router.patch("/{notice_id}", responses=update_response)
 async def update_notice_partialy(
-    request: Request, notice_id: str, update_data: UpdateNotice
+    request: Request, notice_id: str
 ) -> JSONResponse:
     """
     공지 수정(PATCH) 엔드포인트
 
     아래 한 개는 필수적으로 전달해야 하는 패스 파라미터(Path Parameter)
     1. _id
+
+    이때 헤더는 application/form-data로 보낸다.
+
+    아래는 선택적으로 전달할 수 있는 파일 폼 데이터(Form Data)
+    1. files[0]
+
+    이때 다수의 파일을 보낼 경우 아래와 같이 넘버링하여 보낸다.
+    1. files[0]
+    2. files[1]
+
+    아래 세 개는 필수적으로 전달해야 하는 파일이 아닌 폼 데이터(Form Data)
+    1. notice_type
+    2. notice_title
+    3. notice_content
+
+    이때 전달할 수 있는 공지종류(notice_type)는 아래와 같다.
+    1. archive : 자료실
+    2. notification : 공지사항
     """
     try:
+        form_data = await request.form()
+        update_data = await parse_formdata(
+            form_data=form_data,
+            schema=UpdateNotice,
+            collection_name="notices",
+        )
+
         if await notice_crud.update(
             request=request, id=notice_id, update_data=update_data
         ):
@@ -194,7 +219,7 @@ async def update_notice_partialy(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -225,6 +250,6 @@ async def delete_notice(request: Request, notice_id: str) -> JSONResponse:
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

@@ -40,7 +40,7 @@ async def get_inquiry(request: Request, inquiry_id: str):
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -85,7 +85,7 @@ async def get_inquries(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -129,6 +129,25 @@ async def create_inquiry(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+@router.post(SINGLE_PREFIX)
+async def reply_inquiry(
+    request: Request,
+) -> JSONResponse:
+    """
+    고객문의 답변(POST) 엔드포인트
+
+
+    """
+    try:
+        return
+
+    except Exception as error:
+        return JSONResponse(
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

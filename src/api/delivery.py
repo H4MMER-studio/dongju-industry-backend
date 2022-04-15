@@ -66,7 +66,7 @@ async def get_deliveries(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -97,7 +97,7 @@ async def create_delivery(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -141,7 +141,7 @@ async def update_delivery_partialy(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -172,6 +172,6 @@ async def delete_delivery(request: Request, delivery_id: str) -> JSONResponse:
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

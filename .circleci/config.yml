@@ -61,6 +61,51 @@ commands:
               --value ${DB_NAME} \
               --overwrite
 
+      - run:
+          name: Put Admin Email
+          command: |
+            aws ssm put-parameter \
+              --name "PRODUCT_ADMIN_EMAIL" \
+              --type "String" \
+              --value ${ADMIN_EMAIL} \
+              --overwrite
+
+      - run:
+          name: Put Admin Email
+          command: |
+            aws ssm put-parameter \
+              --name "PRODUCT_ADMIN_EMAIL" \
+              --type "String" \
+              --value ${ADMIN_EMAIL} \
+              --overwrite
+
+      - run:
+          name: Put Admin Email Password
+          command: |
+            aws ssm put-parameter \
+              --name "PRODUCT_ADMIN_EMAIL_PASSWORD" \
+              --type "String" \
+              --value ${ADMIN_EMAIL_Password} \
+              --overwrite
+
+      - run:
+          name: Put Email Host
+          command: |
+            aws ssm put-parameter \
+              --name "PRODUCT_EMAIL_HOST" \
+              --type "String" \
+              --value ${EMAIL_HOST} \
+              --overwrite
+
+      - run:
+          name: Put Email Port
+          command: |
+            aws ssm put-parameter \
+              --name "PRODUCT_EMAIL_PORT" \
+              --type "String" \
+              --value ${EMAIL_PORT} \
+              --overwrite
+
   notify_slack_pass:
     steps:
       - slack/notify:

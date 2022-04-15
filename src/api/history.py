@@ -60,7 +60,7 @@ async def get_histories(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -86,7 +86,7 @@ async def create_history(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -141,7 +141,7 @@ async def update_history(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -178,6 +178,6 @@ async def delete_history(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

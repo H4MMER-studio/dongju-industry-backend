@@ -8,12 +8,12 @@ from starlette.datastructures import FormData
 
 from src.crud import file_crud
 
-CreateSchema = TypeVar("CreateSchema", bound=BaseModel)
+Schema = TypeVar("Schema", bound=BaseModel)
 
 
 async def parse_formdata(
-    form_data: FormData, create_schema: CreateSchema, collection_name: str
-) -> CreateSchema:
+    form_data: FormData, schema: Schema, collection_name: str
+) -> Schema:
     if not form_data:
         raise ValidationError
 
@@ -42,6 +42,6 @@ async def parse_formdata(
             else:
                 fields[file_field] = [uploaded_file]
 
-        insert_data = create_schema(**fields)
+        insert_data = schema(**fields)
 
         return insert_data

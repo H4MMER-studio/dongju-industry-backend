@@ -15,7 +15,13 @@ class CreateUser(UserBase, CreateSchemaBase):
     user_password: str
 
     class Config:
-        schema_extra: dict[str, dict] = {"example": {}}
+        schema_extra: dict[str, dict] = {
+            "example": {
+                "user_id": "dongju-id",
+                "user_email": "dongju-test@dongju.com",
+                "user_password": "dongju-password",
+            }
+        }
 
 
 class UpdateUser(UserBase, UpdateSchemaBase):
