@@ -85,7 +85,7 @@ commands:
             aws ssm put-parameter \
               --name "PRODUCT_ADMIN_EMAIL_PASSWORD" \
               --type "String" \
-              --value ${ADMIN_EMAIL_Password} \
+              --value ${ADMIN_EMAIL_PASSWORD} \
               --overwrite
 
       - run:
