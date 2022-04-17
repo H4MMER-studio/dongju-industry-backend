@@ -28,9 +28,11 @@ async def close_db():
 
 
 origins = [
+    "http://localhost",
     "http://localhost:3000",
     "http://localhost:5500",
     "https://dongjuind.co.kr",
+    "https://www.dongjuind.co.kr",
     "https://admin.dongjuind.co.kr",
 ]
 app.add_middleware(

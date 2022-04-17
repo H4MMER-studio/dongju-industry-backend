@@ -44,7 +44,7 @@ class CRUDHistory(CRUDBase[CreateHistory, UpdateHistory]):
             return None
 
         if skip and limit:
-            documents = documents[skip - 1 : limit + 1]  # noqa
+            documents = documents[skip - 1 : limit]  # noqa
 
         for document in documents:
             document["_id"] = str(document["_id"])
