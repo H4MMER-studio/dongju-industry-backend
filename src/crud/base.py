@@ -25,18 +25,22 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
     async def get_multi(
         self,
         request: Request,
-        skip: int | None,
-        limit: int | None,
+        skip: int,
+        limit: int,
         sort: list[str],
         filter_field: str | None = None,
         filter_value: str | None = None,
     ) -> dict | None:
-        result = {}
         filter = {}
         if filter_value:
             filter[filter_field] = filter_value
 
-        query = request.app.db[self.collection].find(filter)
+        db = request.app.db[self.collection]
+        if not (data_size := await db.count_documents(filter)):
+            return None
+        else:
+            result = {"data_size": data_size}
+            query = db.find(filter)
 
         if sort:
             sort_field = []
@@ -57,18 +61,13 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
 
             query = query.sort(sort_field)
 
-        documents = await query.to_list(length=None)
-
-        if not (data_size := len(documents)):
-            return None
-
-        if skip and limit:
-            documents = documents[skip - 1 : limit]  # noqa
+        documents = (
+            await query.skip(skip - 1).limit(limit).to_list(length=None)
+        )
 
         for document in documents:
             document["_id"] = str(document["_id"])
 
-        result["data_size"] = data_size
         result["data"] = documents
 
         return result

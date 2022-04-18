@@ -9,8 +9,6 @@ class CRUDHistory(CRUDBase[CreateHistory, UpdateHistory]):
     async def get_multi(
         self,
         request: Request,
-        skip: int | None,
-        limit: int | None,
         sort: list[str],
     ) -> dict | None:
         result: dict = {}
@@ -43,13 +41,8 @@ class CRUDHistory(CRUDBase[CreateHistory, UpdateHistory]):
         if not (data_size := len(documents)):
             return None
 
-        if skip and limit:
-            documents = documents[skip - 1 : limit]  # noqa
-
         for document in documents:
             document["_id"] = str(document["_id"])
-
-        for document in documents:
             start_year = str(document["history_year"])[:3] + "0"
 
             if start_year in temp:

@@ -21,10 +21,8 @@ router = APIRouter()
 @router.get(PLURAL_PREFIX, responses=get_deliveries_response)
 async def get_deliveries(
     request: Request,
-    skip: int
-    | None = Query(default=None, description="페이지네이션 시작 값", example=1),
-    limit: int
-    | None = Query(default=None, description="페이지네이션 종료 값", example=30),
+    skip: int = Query(default=0, description="페이지네이션 시작 값", example=1),
+    limit: int = Query(default=0, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
         default=[
             "delivery-year asc",

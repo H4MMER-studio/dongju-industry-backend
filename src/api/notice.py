@@ -58,10 +58,8 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
 async def get_notices(
     request: Request,
     value: NoticeType = Query(..., description="공지 종류", example="archive"),
-    skip: int
-    | None = Query(default=None, description="페이지네이션 시작 값", example=1),
-    limit: int
-    | None = Query(default=None, description="페이지네이션 종료 값", example=30),
+    skip: int = Query(default=0, description="페이지네이션 시작 값", example=1),
+    limit: int = Query(default=0, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
         default=["created-at desc"],
         description="정렬 기준",

@@ -48,10 +48,8 @@ async def get_inquiry(request: Request, inquiry_id: str):
 @router.get(PLURAL_PREFIX)
 async def get_inquries(
     request: Request,
-    skip: int
-    | None = Query(default=None, description="페이지네이션 시작 값", example=1),
-    limit: int
-    | None = Query(default=None, description="페이지네이션 종료 값", example=30),
+    skip: int = Query(default=0, description="페이지네이션 시작 값", example=1),
+    limit: int = Query(default=0, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
         default=["created-at desc"],
         description="정렬 기준",

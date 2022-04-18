@@ -21,10 +21,6 @@ router = APIRouter()
 @router.get(PLURAL_PREFIX, responses=get_histories_response)
 async def get_histories(
     request: Request,
-    skip: int
-    | None = Query(default=None, description="페이지네이션 시작 값", example=1),
-    limit: int
-    | None = Query(default=None, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
         default=["history-year desc", "history-month desc", "created_at desc"],
         description="정렬 기준",
@@ -34,10 +30,8 @@ async def get_histories(
     """
     연혁 종류별 다량 조회(GET) 엔드포인트
 
-    아래 세 개는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
+    아래 한 개는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
     1. sort
-    2. skip
-    3. limit
 
     이때 기본적으로 아래 기준으로 내림차순 정렬하여 결과를 반환한다.
     1. 연혁연도(history_year)
@@ -45,9 +39,7 @@ async def get_histories(
     3. 엔티티 생성일(created_at)
     """
     try:
-        if result := await history_crud.get_multi(
-            request=request, skip=skip, limit=limit, sort=sort
-        ):
+        if result := await history_crud.get_multi(request=request, sort=sort):
             return JSONResponse(
                 content={"data": result["data"], "size": result["data_size"]},
                 status_code=status.HTTP_200_OK,
