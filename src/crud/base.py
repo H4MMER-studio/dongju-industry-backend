@@ -15,12 +15,13 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         self.collection = collection
 
     async def get_one(self, request: Request, id: str) -> dict | None:
-        document = await request.app.db[self.collection].find_one(
-            {"_id": ObjectId(id)}
-        )
-        document["_id"] = str(document["_id"])
+        db = request.app.db[self.collection]
+        if not (document := db.find_one({"_id": ObjectId(id)})):
+            return None
 
-        return document
+        else:
+            document["_id"] = str(document["_id"])
+            return document
 
     async def get_multi(
         self,
@@ -38,16 +39,15 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         db = request.app.db[self.collection]
         if not (data_size := await db.count_documents(filter)):
             return None
+
         else:
             result = {"data_size": data_size}
             query = db.find(filter)
 
+        sort_field: list = []
         if sort:
-            sort_field = []
-
             for query_string in sort:
                 field, option = query_string.split(" ")
-
                 field = field.replace("-", "_")
 
                 if option == "asc":
@@ -59,11 +59,14 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
 
                 sort_field.append((field, option))
 
-            query = query.sort(sort_field)
+        else:
+            sort_field.append(("$natural", ASCENDING))
 
-        documents = (
-            await query.skip(skip - 1).limit(limit).to_list(length=None)
-        )
+        query = query.sort(sort_field)
+
+        if skip:
+            skip -= 1
+        documents = await query.skip(skip).limit(limit).to_list(length=None)
 
         for document in documents:
             document["_id"] = str(document["_id"])

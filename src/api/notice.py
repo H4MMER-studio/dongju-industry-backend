@@ -32,12 +32,16 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
     try:
         if result := await notice_crud.get_one(request=request, id=notice_id):
             return JSONResponse(
-                content={"data": result}, status_code=status.HTTP_200_OK
+                content={
+                    "data": result["data"],
+                    "latest": result["latest_data"],
+                },
+                status_code=status.HTTP_200_OK,
             )
 
         else:
             return JSONResponse(
-                content={"data", []},
+                content={"data": []},
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
