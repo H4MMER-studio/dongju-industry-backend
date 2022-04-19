@@ -65,7 +65,7 @@ async def get_notices(
     skip: int = Query(default=0, description="페이지네이션 시작 값", example=1),
     limit: int = Query(default=0, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
-        default=["created-at desc"],
+        default=None,
         description="정렬 기준",
         example=["created-at desc"],
     ),

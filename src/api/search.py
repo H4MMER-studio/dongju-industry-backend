@@ -1,8 +1,13 @@
 from fastapi import APIRouter, Path, Query, Request, status
 from fastapi.responses import JSONResponse
 
-from src.crud import CRUDBase
-from src.schema import SearchType, get_search_response
+from src.crud import CRUDSearch
+from src.schema import (
+    DeliverySearchField,
+    InquirySearchField,
+    SearchType,
+    get_search_response,
+)
 
 SINGLE_PREFIX = "/search"
 
@@ -15,16 +20,17 @@ async def search(
     collection: SearchType = Path(
         ..., description="검색 종류", example="inquiries"
     ),
-    field: str = Query(..., description="", example=""),
-    value: str = Query(..., description="", example=""),
-    skip: int
-    | None = Query(default=None, description="페이지네이션 시작 값", example=0),
-    limit: int
-    | None = Query(default=None, description="페이지네이션 종료 값", example=30),
+    field: InquirySearchField
+    | DeliverySearchField = Query(
+        ..., description="검색 대상이 되는 필드", example="inquiry-person-name"
+    ),
+    value: str = Query(..., description="검색 대상이 되는 필드의 값", example="해머"),
+    skip: int = Query(default=0, description="페이지네이션 시작 값", example=0),
+    limit: int = Query(default=0, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
-        default=["created-at asc"],
+        default=["created-at desc"],
         description="정렬 기준",
-        example=["created-at asc"],
+        example=["created-at desc"],
     ),
 ) -> JSONResponse:
     """
@@ -42,6 +48,16 @@ async def search(
     1. field
     2. value
 
+    이때 전달할 수 있는 필드 종류는 각각 아래와 같다.
+    - 납품실적 컬렉션에 대한 검색인 경우
+    1. delivery-product : 품명
+    2. delivery-supplier : 납품처
+
+    - 고객문의 컬렉션에 대한 검색인 경우
+    1. inquiry-title : 문의 제목
+    2. inquiry-person-name : 문의한 고객의 이름
+    3. inquiry-company-name : 문의한 고객의 회사 이름
+
     아래 세 개는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
     1. sort
     2. skip
@@ -51,15 +67,15 @@ async def search(
     1. 엔티티 생성일자(created_at)
     """
     try:
-        search_crud = CRUDBase(collection=collection)
+        search_crud = CRUDSearch(collection=collection)
 
-        if result := await search_crud.get_multi(
+        if result := await search_crud.get(
             request=request,
+            search_field=field.value,
+            search_value=value,
             skip=skip,
             limit=limit,
             sort=sort,
-            filter_field=field,
-            filter_value=value,
         ):
             return JSONResponse(
                 content={"data": result["data"], "size": result["data_size"]},

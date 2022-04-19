@@ -31,4 +31,9 @@ from src.schema.response_example import (
     delete_response,
     update_response,
 )
-from src.schema.search import SearchType, get_search_response
+from src.schema.search import (
+    DeliverySearchField,
+    InquirySearchField,
+    SearchType,
+    get_search_response,
+)

@@ -45,6 +45,9 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
             query = db.find(filter)
 
         sort_field: list = []
+        if self.collection == "inquiry":
+            sort_field.append(("inquiry_resolved_status", ASCENDING))
+
         if sort:
             for query_string in sort:
                 field, option = query_string.split(" ")
@@ -66,7 +69,10 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
 
         if skip:
             skip -= 1
-        documents = await query.skip(skip).limit(limit).to_list(length=None)
+
+        documents = (
+            await query.skip(skip).limit(limit - skip).to_list(length=None)
+        )
 
         for document in documents:
             document["_id"] = str(document["_id"])

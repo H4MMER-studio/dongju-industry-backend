@@ -6,46 +6,56 @@ get_search_response = {
         "description": "성공",
         "content": {
             "application/json": {
-                "example": {
+                "example":
+                {
                     "data": [
                         {
-                            "_id": "62542205f3dfe27c2294b6fc",
-                            "created_at": "2022-04-11T21:40:24.055982+09:00",
+                            "_id": "625d78ec45a235c40e92f3ff",
+                            "created_at": "2022-04-18T23:42:24.677289+09:00",
                             "updated_at": "null",
                             "deleted_at": "null",
-                            "delivery_supplier": "(주)웃샘",
-                            "delivery_product": "AHU 외",
-                            "delivery_amount": 1,
-                            "delivery_year": 2012,
-                            "delivery_month": 2,
-                            "delivery_reference": "용인SD",
+                            "inquiry_type": "estimate",
+                            "inquiry_title": "안녕하세요. 댐퍼 코일 견적 관련 문의입니다.",
+                            "inquiry_email": "H4MMER@naver.com",
+                            "inquiry_person_name": "김해머",
+                            "inquiry_company_name": "해머스튜디오",
+                            "inquiry_product_type": "freeze-protection-damper-coil",
+                            "inquiry_phone_number": "010-1234-5678",
+                            "inquiry_content": "안녕하세요. 댐퍼 코일 견적을 좀 여쭤보고 싶은데 저희 회사 실험실에 사용할 예정입니다.",
+                            "inquiry_resolved_status": True
                         },
                         {
-                            "_id": "6254224bf3dfe27c2294b6fe",
-                            "created_at": "2022-04-11T21:40:24.055982+09:00",
+                            "_id": "625d790d45a235c40e92f400",
+                            "created_at": "2022-04-18T23:42:24.677289+09:00",
                             "updated_at": "null",
                             "deleted_at": "null",
-                            "delivery_supplier": "(주)웃샘",
-                            "delivery_product": "배기 UNIT",
-                            "delivery_amount": 0,
-                            "delivery_year": 2012,
-                            "delivery_month": 3,
-                            "delivery_reference": "대전",
+                            "inquiry_type": "estimate",
+                            "inquiry_title": "안녕하세요. 댐퍼 코일 견적 관련 문의입니다.",
+                            "inquiry_email": "H4MMER@naver.com",
+                            "inquiry_person_name": "sdfgas",
+                            "inquiry_company_name": "해머스튜디오",
+                            "inquiry_product_type": "freeze-protection-damper-coil",
+                            "inquiry_phone_number": "010-1234-5678",
+                            "inquiry_content": "안녕하세요. 댐퍼 코일 견적을 좀 여쭤보고 싶은데 저희 회사 실험실에 사용할 예정입니다.",
+                            "inquiry_resolved_status": True
                         },
                         {
-                            "_id": "62542257f3dfe27c2294b6ff",
-                            "created_at": "2022-04-11T21:40:24.055982+09:00",
+                            "_id": "625d792b45a235c40e92f401",
+                            "created_at": "2022-04-18T23:42:24.677289+09:00",
                             "updated_at": "null",
                             "deleted_at": "null",
-                            "delivery_supplier": "(주)웃샘",
-                            "delivery_product": "AHU 외",
-                            "delivery_amount": 1,
-                            "delivery_year": 2012,
-                            "delivery_month": 4,
-                            "delivery_reference": "고려대",
-                        },
+                            "inquiry_type": "estimate",
+                            "inquiry_title": "안녕하세요. 댐퍼 코일 견적 관련 문의입니다.",
+                            "inquiry_email": "H4MMER@naver.com",
+                            "inquiry_person_name": "asdf",
+                            "inquiry_company_name": "해머스튜디오",
+                            "inquiry_product_type": "freeze-protection-damper-coil",
+                            "inquiry_phone_number": "010-1234-5678",
+                            "inquiry_content": "안녕하세요. 댐퍼 코일 견적을 좀 여쭤보고 싶은데 저희 회사 실험실에 사용할 예정입니다.",
+                            "inquiry_resolved_status": True
+                        }
                     ],
-                    "size": 20,
+                    "size": 8
                 }
             }
         },
