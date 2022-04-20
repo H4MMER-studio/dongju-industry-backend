@@ -63,7 +63,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
                 sort_field.append((field, option))
 
         else:
-            sort_field.append(("$natural", ASCENDING))
+            sort_field.append(("$natural", DESCENDING))
 
         query = query.sort(sort_field)
 
