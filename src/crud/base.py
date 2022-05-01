@@ -29,13 +29,9 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         skip: int,
         limit: int,
         sort: list[str],
-        filter_field: str | None = None,
-        filter_value: str | None = None,
+        filter: dict = {},
+        keyword: str | None = None,
     ) -> dict | None:
-        filter = {}
-        if filter_value:
-            filter[filter_field] = filter_value
-
         db = request.app.db[self.collection]
         if not (data_size := await db.count_documents(filter)):
             return None

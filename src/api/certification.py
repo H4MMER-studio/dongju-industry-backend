@@ -61,9 +61,8 @@ async def get_certification(
 @router.get("s", responses=get_certifications_response)
 async def get_certifications(
     request: Request,
-    value: CertificationType = Query(
-        ..., description="인증 종류", example="test-result"
-    ),
+    value: CertificationType
+    | None = Query(None, description="인증 종류", example="test-result"),
     skip: int = Query(default=0, description="페이지네이션 시작 값", example=1),
     limit: int = Query(default=0, desciption="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
@@ -94,13 +93,13 @@ async def get_certifications(
     1. 인증일자(certification_date)
     """
     try:
+        if value:
+            filter = {"certification_type": value.value}
+        else:
+            filter = {}
+
         if result := await certification_crud.get_multi(
-            request=request,
-            skip=skip,
-            limit=limit,
-            sort=sort,
-            filter_field="certification_type",
-            filter_value=value.value,
+            request=request, skip=skip, limit=limit, sort=sort, filter=filter
         ):
             return JSONResponse(
                 content={"data": result["data"], "size": result["data_size"]},
