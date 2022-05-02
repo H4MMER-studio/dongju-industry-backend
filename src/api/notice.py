@@ -95,8 +95,7 @@ async def get_notices(
             skip=skip,
             limit=limit,
             sort=sort,
-            filter_field="notice_type",
-            filter_value=value.value,
+            filter={"notice_type": value.value},
         ):
             return JSONResponse(
                 content={"data": result["data"], "size": result["data_size"]},
@@ -111,7 +110,7 @@ async def get_notices(
 
     except Exception as error:
         return JSONResponse(
-            content={"detail": error},
+            content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
