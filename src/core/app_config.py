@@ -6,6 +6,8 @@ from pydantic import BaseSettings, EmailStr, Field
 class Settings(BaseSettings):
     LEVEL: str
     DB_NAME: str
+    ALGORITHM: str
+    SECRET_KEY: str
     PROJECT_TITLE: str = "동주산업 API 문서"
     PROJECT_VERSION: int = 1
     PROJECT_DESCRIPTION: str = "동주산업 API 문서"
@@ -40,5 +42,6 @@ class ProductSettings(Settings):
 def get_settings():
     if Settings().LEVEL == "DEVELOP":
         return DevelopSettings()
+
     else:
         return ProductSettings()

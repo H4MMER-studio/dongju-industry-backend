@@ -124,21 +124,21 @@ jobs:
       - image: "cimg/python:3.10"
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: poetry
-      - run:
-          name: Run Tests
-          command: poetry run pytest --version
-      - aws-cli/setup
-      - aws_put_parameters
-      - run:
-          name: Deploy with AWS CodeDeploy
-          command: |
-            aws deploy create-deployment \
-              --application-name ${CODE_DEPLOY_APPLICATION_NAME} \
-              --deployment-group-name ${CODE_DEPLOY_GROUP_NAME} \
-              --deployment-config-name ${CODE_DEPLOY_CONFIG_NAME} \
-              --github-location repository=${GITHUB_REPOSITORY},commitId=${CIRCLE_SHA1}
+      # - python/install-packages:
+      #     pkg-manager: poetry
+      # - run:
+      #     name: Run Tests
+      #     command: poetry run pytest --version
+      # - aws-cli/setup
+      # - aws_put_parameters
+      # - run:
+      #     name: Deploy with AWS CodeDeploy
+      #     command: |
+      #       aws deploy create-deployment \
+      #         --application-name ${CODE_DEPLOY_APPLICATION_NAME} \
+      #         --deployment-group-name ${CODE_DEPLOY_GROUP_NAME} \
+      #         --deployment-config-name ${CODE_DEPLOY_CONFIG_NAME} \
+      #         --github-location repository=${GITHUB_REPOSITORY},commitId=${CIRCLE_SHA1}
       - notify_slack_error
       - notify_slack_pass
 

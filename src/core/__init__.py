@@ -1,1 +1,1 @@
-from src.core.config import get_settings
+from src.core.app_config import get_settings
