@@ -1,5 +1,0 @@
-# !/bin/bash
-
-cd /home/ubuntu/build/
-rm -rf ./dongju-industry-backend
-pkill gunicorn
