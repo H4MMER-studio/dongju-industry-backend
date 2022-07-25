@@ -39,15 +39,16 @@ async def get_histories(
     3. 엔티티 생성일(created_at)
     """
     try:
-        if result := await history_crud.get_multi(request=request, sort=sort):
+        result = await history_crud.get_multi(request=request, sort=sort)
+        if result["size"]:
             return JSONResponse(
-                content={"data": result["data"], "size": result["data_size"]},
+                content=result,
                 status_code=status.HTTP_200_OK,
             )
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content=result, status_code=status.HTTP_404_NOT_FOUND
             )
 
     except Exception as error:

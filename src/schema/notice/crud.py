@@ -1,6 +1,6 @@
 from enum import Enum
 
-from src.schema.crud import CreateSchemaBase, CRUDSchemaBase, UpdateSchemaBase
+from pydantic import BaseModel
 
 
 class NoticeType(str, Enum):
@@ -8,7 +8,7 @@ class NoticeType(str, Enum):
     NOTIFICATION = "notification"
 
 
-class NoticeBase(CRUDSchemaBase):
+class NoticeBase(BaseModel):
     notice_type: NoticeType | None
     notice_title: str | None
     notice_content: str | None
@@ -16,7 +16,7 @@ class NoticeBase(CRUDSchemaBase):
     notice_images: list[dict[str, str]] | None
 
 
-class CreateNotice(CreateSchemaBase, NoticeBase):
+class CreateNotice(NoticeBase):
     notice_type: NoticeType
     notice_title: str
     notice_content: str
@@ -25,6 +25,6 @@ class CreateNotice(CreateSchemaBase, NoticeBase):
         schema_extra: dict[str, dict] = {"example": {}}
 
 
-class UpdateNotice(UpdateSchemaBase, NoticeBase):
+class UpdateNotice(NoticeBase):
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}

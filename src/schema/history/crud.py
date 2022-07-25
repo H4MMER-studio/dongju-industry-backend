@@ -1,13 +1,13 @@
-from src.schema.crud import CreateSchemaBase, CRUDSchemaBase, UpdateSchemaBase
+from pydantic import BaseModel
 
 
-class HistoryBase(CRUDSchemaBase):
+class HistoryBase(BaseModel):
     history_year: int | None
     history_month: int | None
     history_content: str | None
 
 
-class CreateHistory(CreateSchemaBase, HistoryBase):
+class CreateHistory(HistoryBase):
     history_year: int
     history_month: int
     history_content: str
@@ -22,5 +22,5 @@ class CreateHistory(CreateSchemaBase, HistoryBase):
         }
 
 
-class UpdateHistory(UpdateSchemaBase, HistoryBase):
+class UpdateHistory(HistoryBase):
     history_id: str

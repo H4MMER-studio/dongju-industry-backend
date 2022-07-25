@@ -51,10 +51,13 @@ async def get_inquries(
     skip: int = Query(default=0, description="페이지네이션 시작 값", example=1),
     limit: int = Query(default=0, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
-        default=["created-at desc"],
+        default=["inquiry-resolved-status asc", "created-at desc"],
         description="정렬 기준",
         example=["created-at desc"],
     ),
+    type: str = Query(default=None, description="조회 방법", example="search"),
+    field: str = Query(default=None, description="검색 대싱이 되는 필드", example=""),
+    value: str = Query(default=None, description="검색어", example="ㅎㅐ"),
 ) -> JSONResponse:
     """
     고객문의 다량 조회(GET) 엔드포인트
@@ -63,22 +66,31 @@ async def get_inquries(
     1. sort
     2. skip
     3. limit
+    4. field
+    5. keyword
 
     이때 기본적으로 아래 순서를 기준으로 내림차순 정렬하여 결과를 반환한다.
     1. 엔티티 생성일자(created_at)
     """
     try:
-        if result := await inquiry_crud.get_multi(
-            request=request, skip=skip, limit=limit, sort=sort
-        ):
+        result = await inquiry_crud.get_multi(
+            request=request,
+            skip=skip,
+            limit=limit,
+            sort=sort,
+            type=type,
+            field=field,
+            value=value,
+        )
+        if result["size"]:
             return JSONResponse(
-                content={"data": result["data"], "size": result["data_size"]},
+                content=result,
                 status_code=status.HTTP_200_OK,
             )
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content=result, status_code=status.HTTP_404_NOT_FOUND
             )
 
     except Exception as error:

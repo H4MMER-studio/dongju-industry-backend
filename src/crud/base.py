@@ -6,6 +6,8 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from pymongo import ASCENDING, DESCENDING, DeleteOne, UpdateOne
 
+from src.util import datetime_to_str, decompose_korean, get_datetime
+
 CreateSchema = TypeVar("CreateSchema", bound=BaseModel)
 UpdateSchema = TypeVar("UpdateSchema", bound=BaseModel)
 
@@ -29,21 +31,26 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         skip: int,
         limit: int,
         sort: list[str],
-        filter: dict = {},
-        keyword: str | None = None,
+        type: str | None,
+        field: str | None,
+        value: str | None,
     ) -> dict | None:
-        db = request.app.db[self.collection]
-        if not (data_size := await db.count_documents(filter)):
-            return None
+        session = request.app.db[self.collection]
 
-        else:
-            result = {"data_size": data_size}
-            query = db.find(filter)
+        pipeline: dict = {}
+        if type == "filter" and field and value:
+            pipeline[field] = value
+
+        elif field and value:
+            decomposed_keyword: str = await decompose_korean(value)
+            converted_field: str = field.replace("-", "_")
+
+            pipeline[f"{converted_field}.decomposed"] = {
+                "$regex": f".*{decomposed_keyword}.*",
+                "$options": "i",
+            }
 
         sort_field: list = []
-        if self.collection == "inquiry":
-            sort_field.append(("inquiry_resolved_status", ASCENDING))
-
         if sort:
             for query_string in sort:
                 field, option = query_string.split(" ")
@@ -61,25 +68,51 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         else:
             sort_field.append(("$natural", DESCENDING))
 
-        query = query.sort(sort_field)
-
         if skip:
             skip -= 1
 
-        documents = (
-            await query.skip(skip).limit(limit - skip).to_list(length=None)
-        )
+        documents = await session.find(
+            filter=pipeline,
+            sort=sort_field,
+            skip=skip,
+            limit=limit - skip,
+        ).to_list(length=None)
 
-        for document in documents:
-            document["_id"] = str(document["_id"])
+        if type == "search":
+            documents = [
+                {converted_field: document[converted_field]["composed"]}
+                for document in documents
+            ]
 
-        result["data"] = documents
+        else:
+            print(documents)
+            for document in documents:
+                document["_id"] = str(document["_id"])
+
+                document["created_at"] = await datetime_to_str(
+                    datetime=document["created_at"]
+                )
+
+                if document["updated_at"]:
+                    document["updated_at"] = await datetime_to_str(
+                        datetime=document["updated_at"]
+                    )
+
+                if document["deleted_at"]:
+                    document["deleted_at"] = await datetime_to_str(
+                        datetime=document["deleted_at"]
+                    )
+
+        result: dict = {"size": len(documents), "data": documents}
 
         return result
 
     async def create(
         self, request: Request, insert_data: CreateSchema
     ) -> bool:
+        insert_data = insert_data.dict()
+        insert_data["created_at"] = get_datetime()
+
         inserted_document = await request.app.db[self.collection].insert_one(
             jsonable_encoder(insert_data)
         )
@@ -92,6 +125,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         self, request: Request, id: str, update_data: UpdateSchema
     ) -> bool:
         update_data = update_data.dict(exclude_none=True)
+        update_data["updated_at"] = get_datetime()
 
         updated_document = await request.app.db[
             self.collection

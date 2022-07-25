@@ -61,7 +61,9 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
 @router.get("s", responses=get_notices_response)
 async def get_notices(
     request: Request,
-    value: NoticeType = Query(..., description="공지 종류", example="archive"),
+    value: NoticeType = Query(
+        default=..., description="공지 종류", example="archive"
+    ),
     skip: int = Query(default=0, description="페이지네이션 시작 값", example=1),
     limit: int = Query(default=0, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
@@ -90,21 +92,24 @@ async def get_notices(
     1. 엔티티 생성일자(created_at)
     """
     try:
-        if result := await notice_crud.get_multi(
+        result = await notice_crud.get_multi(
             request=request,
             skip=skip,
             limit=limit,
             sort=sort,
-            filter={"notice_type": value.value},
-        ):
+            type="filter",
+            field="notice_type",
+            value=value.value,
+        )
+        if result["size"]:
             return JSONResponse(
-                content={"data": result["data"], "size": result["data_size"]},
+                content=result,
                 status_code=status.HTTP_200_OK,
             )
 
         else:
             return JSONResponse(
-                content={"data": []},
+                content=result,
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 

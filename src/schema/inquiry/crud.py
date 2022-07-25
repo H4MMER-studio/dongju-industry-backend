@@ -1,8 +1,6 @@
 from enum import Enum
 
-from pydantic import EmailStr
-
-from src.schema.crud import CreateSchemaBase, CRUDSchemaBase, UpdateSchemaBase
+from pydantic import BaseModel, EmailStr
 
 
 class ProductType(str, Enum):
@@ -19,7 +17,7 @@ class InquiryType(str, Enum):
     ETC = "etc"
 
 
-class InquiryBase(CRUDSchemaBase):
+class InquiryBase(BaseModel):
     inquiry_type: InquiryType | None
     inquiry_title: str | None
     inquiry_email: EmailStr | None
@@ -31,7 +29,7 @@ class InquiryBase(CRUDSchemaBase):
     inquiry_resolved_status: bool = False
 
 
-class CreateInquiry(CreateSchemaBase, InquiryBase):
+class CreateInquiry(InquiryBase):
     inquiry_type: InquiryType
     inquiry_product_type: ProductType
     inquiry_title: str
@@ -56,6 +54,6 @@ class CreateInquiry(CreateSchemaBase, InquiryBase):
         }
 
 
-class UpdateInquiry(UpdateSchemaBase, InquiryBase):
+class UpdateInquiry(InquiryBase):
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}

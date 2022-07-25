@@ -14,8 +14,6 @@ class CRUDFile:
         aws_access_key_id: str,
         aws_secret_access_key: str,
     ) -> None:
-        self.a = aws_access_key_id
-        self.b = aws_secret_access_key
         self.service_name = service_name
         self.bucket_name = bucket_name
         self.session = Session(

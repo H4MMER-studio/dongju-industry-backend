@@ -62,7 +62,7 @@ async def get_certification(
 async def get_certifications(
     request: Request,
     value: CertificationType
-    | None = Query(None, description="인증 종류", example="test-result"),
+    | None = Query(default=None, description="인증 종류", example="test-result"),
     skip: int = Query(default=0, description="페이지네이션 시작 값", example=1),
     limit: int = Query(default=0, desciption="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
@@ -74,7 +74,7 @@ async def get_certifications(
     """
     인증 종류별 다량 조회(GET) 엔드포인트
 
-    아래 한 개는 필수적으로 전달해야 하는 쿼리 파라미터(Query Parameter)
+    아래 한 개는 선택적으로 전달해야 하는 쿼리 파라미터(Query Parameter)
     1. value
 
     이때 그 값으로 인증종류(certification_type)를 전달한다.
@@ -83,6 +83,8 @@ async def get_certifications(
     2. patent : 특허증
     3. test-result : 시험 성적서
     4. core-certification : 주요 인증
+
+    만약 따로 value 쿼리 파라미터를 전달하지 않으면 전체 인증종류에 대한 결괏값을 반환한다.
 
     아래 세 개는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
     1. sort
@@ -94,12 +96,17 @@ async def get_certifications(
     """
     try:
         if value:
-            filter = {"certification_type": value.value}
-        else:
-            filter = {}
+            field = "certification_type"
+            value = value.value
 
         if result := await certification_crud.get_multi(
-            request=request, skip=skip, limit=limit, sort=sort, filter=filter
+            request=request,
+            skip=skip,
+            limit=limit,
+            sort=sort,
+            type="filter",
+            field=field,
+            value=value,
         ):
             return JSONResponse(
                 content={"data": result["data"], "size": result["data_size"]},

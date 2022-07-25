@@ -33,6 +33,11 @@ async def get_deliveries(
         description="정렬 기준",
         example=["delivery-year desc", "delivery-month desc"],
     ),
+    type: str = Query(default=None, description="조회 방법", example="search"),
+    field: str = Query(
+        default=None, description="검색 대상이 되는 필드", example="delivery-supplier"
+    ),
+    value: str = Query(default=None, description="검색어", example="ㄷㅓㄱㅅㅏㄴ"),
 ) -> JSONResponse:
     """
     납품실적 다량 조회(GET) 엔드포인트
@@ -49,17 +54,24 @@ async def get_deliveries(
     4. 납품량(delivery_amount)
     """
     try:
-        if result := await delivery_crud.get_multi(
-            request=request, skip=skip, limit=limit, sort=sort
-        ):
+        result = await delivery_crud.get_multi(
+            request=request,
+            skip=skip,
+            limit=limit,
+            sort=sort,
+            type=type,
+            field=field,
+            value=value,
+        )
+        if result["size"]:
             return JSONResponse(
-                content={"data": result["data"], "size": result["data_size"]},
+                content=result,
                 status_code=status.HTTP_200_OK,
             )
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content=result, status_code=status.HTTP_404_NOT_FOUND
             )
 
     except Exception as error:

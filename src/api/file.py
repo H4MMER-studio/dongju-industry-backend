@@ -2,8 +2,8 @@ from botocore.exceptions import ClientError
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse, Response
 
-from src.crud import file_crud
 from src.schema import file_download_response
+from src.util import file_crud
 
 SINGLE_PREFIX = "/file"
 

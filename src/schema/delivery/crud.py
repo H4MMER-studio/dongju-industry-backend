@@ -1,7 +1,7 @@
-from src.schema.crud import CreateSchemaBase, CRUDSchemaBase, UpdateSchemaBase
+from pydantic import BaseModel
 
 
-class DeliveryBase(CRUDSchemaBase):
+class DeliveryBase(BaseModel):
     delivery_supplier: str | None
     delivery_product: str | None
     delivery_amount: int | None
@@ -10,7 +10,7 @@ class DeliveryBase(CRUDSchemaBase):
     delivery_reference: str | None
 
 
-class CreateDelivery(CreateSchemaBase, DeliveryBase):
+class CreateDelivery(DeliveryBase):
     delivery_supplier: str
     delivery_product: str
     delivery_amount: int
@@ -29,6 +29,6 @@ class CreateDelivery(CreateSchemaBase, DeliveryBase):
         }
 
 
-class UpdateDelivery(UpdateSchemaBase, DeliveryBase):
+class UpdateDelivery(DeliveryBase):
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}
