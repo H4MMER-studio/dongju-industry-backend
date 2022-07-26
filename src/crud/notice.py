@@ -8,27 +8,25 @@ from src.schema import CreateNotice, UpdateNotice
 
 class CRUDNotice(CRUDBase[CreateNotice, UpdateNotice]):
     async def get_one(self, request: Request, id: str) -> dict | None:
-        db = request.app.db[self.collection]
+        session = request.app.db[self.collection]
 
-        if not (document := await db.find_one({"_id": ObjectId(id)})):
-            return None
+        document = await session.find_one({"_id": ObjectId(id)})
+        document["_id"] = str(document["_id"])
+        result: dict = {"data": {"current": document}}
 
-        else:
-            document["_id"] = str(document["_id"])
-            result = {"data": document}
+        latest_documents = await session.find(
+            filter={"notice_type": document["notice_type"]},
+            sort=[("$natural", DESCENDING)],
+            limit=2,
+        ).to_list(length=None)
 
-            latest_documents = (
-                await db.find({"notice_type": document["notice_type"]})
-                .sort([("$natural", DESCENDING)])
-                .limit(2)
-                .to_list(length=None)
-            )
+        for latest_document in latest_documents:
+            latest_document["_id"] = str(latest_document["_id"])
 
-            for data in latest_documents:
-                data["_id"] = str(data["_id"])
-            result["latest_data"] = latest_documents
+        result["data"]["latest"] = latest_documents
+        result["size"] = len(document) + len(latest_documents)
 
-            return result
+        return result
 
 
 notice_crud = CRUDNotice(collection="notices")
