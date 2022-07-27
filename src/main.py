@@ -12,7 +12,7 @@ app = FastAPI(
     description=get_settings().PROJECT_DESCRIPTION,
 )
 
-app.include_router(router=router, prefix="/api")
+app.include_router(router=router)
 
 
 @app.on_event("startup")

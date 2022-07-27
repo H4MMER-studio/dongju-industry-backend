@@ -11,14 +11,14 @@ from src.schema import CreateAdmin, UpdateAdmin
 
 class CRUDAdmin(CRUDBase[CreateAdmin, UpdateAdmin]):
     async def auth_user(
-        self, request: Request, access_token=Header(...)
+        self, request: Request, authorization=Header(...)
     ) -> bool:
         """
         에러 핸들링 필요
         """
         try:
             payload = jwt.decode(
-                token=access_token,
+                token=authorization,
                 key=get_settings().SECRET_KEY,
                 algorithms=[get_settings().ALGORITHM],
             )
