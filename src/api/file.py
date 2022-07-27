@@ -10,7 +10,7 @@ SINGLE_PREFIX = "/file"
 router = APIRouter(prefix=SINGLE_PREFIX)
 
 
-@router.get("/{file_name}", responses=file_download_response)
+@router.get(path="/{file_name}", responses=file_download_response)
 async def download_file(file_name: str) -> Response | JSONResponse:
     """
     파일 다운로드(GET) 엔드포인트
@@ -26,7 +26,7 @@ async def download_file(file_name: str) -> Response | JSONResponse:
     except ClientError as aws_error:
         if aws_error.response["Error"]["Code"] == "NoSuchKey":
             return JSONResponse(
-                content={"data": []},
+                content={"detail": "not found"},
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 

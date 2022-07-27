@@ -39,6 +39,6 @@ get_histories_response = {
     "404": {
         "model": GetResponseModel,
         "description": "존재하지 않는 엔티티",
-        "content": {"application/json": {"example": {"data": []}}},
+        "content": {"application/json": {"example": {"detail": "not found"}}},
     },
 }

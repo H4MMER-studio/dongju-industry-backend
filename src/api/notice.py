@@ -1,9 +1,9 @@
 from bson.objectid import InvalidId
-from fastapi import APIRouter, Query, Request, status
+from fastapi import APIRouter, Depends, Query, Request, status
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
-from src.crud import notice_crud
+from src.crud import admin_crud, notice_crud
 from src.schema import (
     CreateNotice,
     NoticeType,
@@ -21,7 +21,7 @@ SINGLE_PREFIX = "/notice"
 router = APIRouter(prefix=SINGLE_PREFIX)
 
 
-@router.get("/{notice_id}", responses=get_notice_response)
+@router.get(path="/{notice_id}", responses=get_notice_response)
 async def get_notice(request: Request, notice_id: str) -> JSONResponse:
     """
     공지 조회(GET) 엔드포인트
@@ -39,7 +39,7 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
 
         else:
             return JSONResponse(
-                content=result,
+                content={"detail": "not found"},
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
@@ -56,7 +56,7 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
         )
 
 
-@router.get("s", responses=get_notices_response)
+@router.get(path="s", responses=get_notices_response)
 async def get_notices(
     request: Request,
     value: NoticeType = Query(
@@ -107,7 +107,7 @@ async def get_notices(
 
         else:
             return JSONResponse(
-                content=result,
+                content={"detail": "not found"},
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
@@ -118,7 +118,11 @@ async def get_notices(
         )
 
 
-@router.post("", responses=create_response)
+@router.post(
+    path="",
+    responses=create_response,
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def create_notice(request: Request) -> JSONResponse:
     """
     공지 생성(POST) 엔드포인트
@@ -151,7 +155,7 @@ async def create_notice(request: Request) -> JSONResponse:
         await notice_crud.create(insert_data=insert_data, request=request)
 
         return JSONResponse(
-            content={"detail": "Success"}, status_code=status.HTTP_200_OK
+            content={"detail": "success"}, status_code=status.HTTP_200_OK
         )
 
     except ValidationError as validation_error:
@@ -167,7 +171,11 @@ async def create_notice(request: Request) -> JSONResponse:
         )
 
 
-@router.patch("/{notice_id}", responses=update_response)
+@router.patch(
+    path="/{notice_id}",
+    responses=update_response,
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def update_notice_partialy(
     request: Request, notice_id: str
 ) -> JSONResponse:
@@ -207,12 +215,13 @@ async def update_notice_partialy(
             request=request, id=notice_id, update_data=update_data
         ):
             return JSONResponse(
-                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+                content={"detail": "success"}, status_code=status.HTTP_200_OK
             )
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except InvalidId as invalid_id_error:
@@ -228,7 +237,11 @@ async def update_notice_partialy(
         )
 
 
-@router.delete("/{notice_id}", responses=delete_response)
+@router.delete(
+    path="/{notice_id}",
+    responses=delete_response,
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def delete_notice(request: Request, notice_id: str) -> JSONResponse:
     """
     공지 삭제(DELETE) 엔드포인트
@@ -239,11 +252,12 @@ async def delete_notice(request: Request, notice_id: str) -> JSONResponse:
     try:
         if await notice_crud.delete(request=request, id=notice_id):
             return JSONResponse(
-                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+                content={"detail": "success"}, status_code=status.HTTP_200_OK
             )
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except InvalidId as invalid_id_error:

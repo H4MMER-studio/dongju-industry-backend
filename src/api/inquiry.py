@@ -1,8 +1,8 @@
 from bson.objectid import InvalidId
-from fastapi import APIRouter, Query, Request, status
+from fastapi import APIRouter, Depends, Query, Request, status
 from fastapi.responses import JSONResponse
 
-from src.crud import inquiry_crud
+from src.crud import admin_crud, inquiry_crud
 from src.schema import CreateInquiry
 
 SINGLE_PREFIX = "/inquiry"
@@ -11,7 +11,11 @@ PLURAL_PREFIX = "/inquiries"
 router = APIRouter()
 
 
-@router.get(SINGLE_PREFIX + "/{inquiry_id}")
+@router.get(
+    path=SINGLE_PREFIX + "/{inquiry_id}",
+    responses={},
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def get_inquiry(request: Request, inquiry_id: str):
     """
     고객문의 조회(GET) 엔드포인트
@@ -29,7 +33,8 @@ async def get_inquiry(request: Request, inquiry_id: str):
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except InvalidId as invalid_id_error:
@@ -45,7 +50,11 @@ async def get_inquiry(request: Request, inquiry_id: str):
         )
 
 
-@router.get(PLURAL_PREFIX)
+@router.get(
+    path=PLURAL_PREFIX,
+    responses={},
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def get_inquries(
     request: Request,
     skip: int = Query(default=0, description="페이지네이션 시작 값", example=1),
@@ -90,7 +99,8 @@ async def get_inquries(
 
         else:
             return JSONResponse(
-                content=result, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except Exception as error:
@@ -100,7 +110,7 @@ async def get_inquries(
         )
 
 
-@router.post(SINGLE_PREFIX)
+@router.post(path=SINGLE_PREFIX, responses={})
 async def create_inquiry(
     request: Request, insert_data: CreateInquiry
 ) -> JSONResponse:
@@ -134,7 +144,7 @@ async def create_inquiry(
         await inquiry_crud.create(request=request, insert_data=insert_data)
 
         return JSONResponse(
-            content={"detail": "Success"}, status_code=status.HTTP_200_OK
+            content={"detail": "success"}, status_code=status.HTTP_200_OK
         )
 
     except Exception as error:
@@ -144,7 +154,11 @@ async def create_inquiry(
         )
 
 
-@router.post(SINGLE_PREFIX)
+@router.post(
+    path=SINGLE_PREFIX,
+    responses={},
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def reply_inquiry(
     request: Request,
 ) -> JSONResponse:

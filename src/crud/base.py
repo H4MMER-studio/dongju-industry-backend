@@ -85,7 +85,6 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
             ]
 
         else:
-            print(documents)
             for document in documents:
                 document["_id"] = str(document["_id"])
 
@@ -110,11 +109,12 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
     async def create(
         self, request: Request, insert_data: CreateSchema
     ) -> bool:
-        insert_data = insert_data.dict()
-        insert_data["created_at"] = get_datetime()
+        if type(insert_data) != dict:
+            insert_data = insert_data.dict()
+        insert_data["created_at"] = await get_datetime()
 
         inserted_document = await request.app.db[self.collection].insert_one(
-            jsonable_encoder(insert_data)
+            insert_data
         )
 
         result = inserted_document.acknowledged
@@ -125,13 +125,13 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         self, request: Request, id: str, update_data: UpdateSchema
     ) -> bool:
         update_data = update_data.dict(exclude_none=True)
-        update_data["updated_at"] = get_datetime()
+        update_data["updated_at"] = await get_datetime()
 
         updated_document = await request.app.db[
             self.collection
         ].find_one_and_update(
             {"_id": ObjectId(id)},
-            {"$set": jsonable_encoder(update_data)},
+            {"$set": update_data},
             upsert=False,
         )
 

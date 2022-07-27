@@ -1,8 +1,8 @@
 from bson.objectid import InvalidId
-from fastapi import APIRouter, Query, Request, status
+from fastapi import APIRouter, Depends, Query, Request, status
 from fastapi.responses import JSONResponse
 
-from src.crud import delivery_crud
+from src.crud import admin_crud, delivery_crud
 from src.schema import (
     CreateDelivery,
     UpdateDelivery,
@@ -71,7 +71,8 @@ async def get_deliveries(
 
         else:
             return JSONResponse(
-                content=result, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except Exception as error:
@@ -81,7 +82,11 @@ async def get_deliveries(
         )
 
 
-@router.post(SINGLE_PREFIX, responses=create_delivery_response)
+@router.post(
+    path=SINGLE_PREFIX,
+    responses=create_delivery_response,
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def create_delivery(
     request: Request, insert_data: CreateDelivery
 ) -> JSONResponse:
@@ -99,11 +104,12 @@ async def create_delivery(
     2. delivery_reference
     """
     try:
-        await delivery_crud.create(request=request, insert_data=insert_data)
-
-        return JSONResponse(
-            content={"detail": "Success"}, status_code=status.HTTP_200_OK
-        )
+        if await delivery_crud.create(
+            request=request, insert_data=insert_data
+        ):
+            return JSONResponse(
+                content={"detail": "success"}, status_code=status.HTTP_200_OK
+            )
 
     except Exception as error:
         return JSONResponse(
@@ -112,7 +118,11 @@ async def create_delivery(
         )
 
 
-@router.patch(SINGLE_PREFIX + "/{delivery_id}", responses=update_response)
+@router.patch(
+    path=SINGLE_PREFIX + "/{delivery_id}",
+    responses=update_response,
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def update_delivery_partialy(
     request: Request, delivery_id: str, update_data: UpdateDelivery
 ) -> JSONResponse:
@@ -135,12 +145,13 @@ async def update_delivery_partialy(
             request=request, id=delivery_id, update_data=update_data
         ):
             return JSONResponse(
-                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+                content={"detail": "success"}, status_code=status.HTTP_200_OK
             )
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except InvalidId as invalid_id_error:
@@ -156,7 +167,11 @@ async def update_delivery_partialy(
         )
 
 
-@router.delete(SINGLE_PREFIX + "/{delivery_id}", responses=delete_response)
+@router.delete(
+    path=SINGLE_PREFIX + "/{delivery_id}",
+    responses=delete_response,
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def delete_delivery(request: Request, delivery_id: str) -> JSONResponse:
     """
     납품실적 삭제(DELETE) 엔드포인트
@@ -167,11 +182,12 @@ async def delete_delivery(request: Request, delivery_id: str) -> JSONResponse:
     try:
         if await delivery_crud.delete(request=request, id=delivery_id):
             return JSONResponse(
-                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+                content={"detail": "success"}, status_code=status.HTTP_200_OK
             )
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except InvalidId as invalid_id_error:

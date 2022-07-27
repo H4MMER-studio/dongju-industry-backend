@@ -1,9 +1,9 @@
 from bson.objectid import InvalidId
-from fastapi import APIRouter, Query, Request, status
+from fastapi import APIRouter, Depends, Query, Request, status
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
-from src.crud import certification_crud
+from src.crud import admin_crud, certification_crud
 from src.schema import (
     CertificationType,
     CreateCertification,
@@ -21,7 +21,7 @@ SINGLE_PREFIX = "/certification"
 router = APIRouter(prefix=SINGLE_PREFIX)
 
 
-@router.get("/{certification_id}", responses=get_certification_response)
+@router.get(path="/{certification_id}", responses=get_certification_response)
 async def get_certification(
     request: Request, certification_id: str
 ) -> JSONResponse:
@@ -42,7 +42,8 @@ async def get_certification(
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except InvalidId as invalid_id_error:
@@ -58,7 +59,7 @@ async def get_certification(
         )
 
 
-@router.get("s", responses=get_certifications_response)
+@router.get(path="s", responses=get_certifications_response)
 async def get_certifications(
     request: Request,
     value: CertificationType
@@ -109,13 +110,14 @@ async def get_certifications(
             value=value,
         ):
             return JSONResponse(
-                content={"data": result["data"], "size": result["data_size"]},
+                content=result,
                 status_code=status.HTTP_200_OK,
             )
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except Exception as error:
@@ -125,7 +127,11 @@ async def get_certifications(
         )
 
 
-@router.post("", responses=create_response)
+@router.post(
+    path="",
+    responses=create_response,
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def create_certification(request: Request) -> JSONResponse:
     """
     인증 생성(POST) 엔드포인트
@@ -170,7 +176,7 @@ async def create_certification(request: Request) -> JSONResponse:
         )
 
         return JSONResponse(
-            content={"detail": "Success"}, status_code=status.HTTP_200_OK
+            content={"detail": "success"}, status_code=status.HTTP_200_OK
         )
 
     except ValidationError as validation_error:
@@ -192,7 +198,11 @@ async def create_certification(request: Request) -> JSONResponse:
         )
 
 
-@router.patch("/{certification_id}", responses=update_response)
+@router.patch(
+    path="/{certification_id}",
+    responses=update_response,
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def update_certification_partialy(
     request: Request, certification_id: str
 ) -> JSONResponse:
@@ -239,12 +249,13 @@ async def update_certification_partialy(
             request=request, id=certification_id, update_data=update_data
         ):
             return JSONResponse(
-                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+                content={"detail": "success"}, status_code=status.HTTP_200_OK
             )
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except InvalidId as invalid_id_error:
@@ -260,7 +271,11 @@ async def update_certification_partialy(
         )
 
 
-@router.delete("/{certification_id}", responses=delete_response)
+@router.delete(
+    path="/{certification_id}",
+    responses=delete_response,
+    dependencies=[Depends(admin_crud.auth_user)],
+)
 async def delete_certification(
     request: Request, certification_id: str
 ) -> JSONResponse:
@@ -275,12 +290,13 @@ async def delete_certification(
             request=request, id=certification_id
         ):
             return JSONResponse(
-                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+                content={"detail": "success"}, status_code=status.HTTP_200_OK
             )
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_404_NOT_FOUND
+                content={"detail": "not found"},
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
     except InvalidId as invalid_id_error:
