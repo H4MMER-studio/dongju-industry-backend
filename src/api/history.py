@@ -152,7 +152,7 @@ async def update_history(
 @router.delete(
     path=PLURAL_PREFIX,
     responses=delete_response,
-    dependencies=[Depends(admin_crud.auth)],
+    dependencies=[Depends(admin_crud.auth_user)],
 )
 async def delete_history(
     request: Request,
