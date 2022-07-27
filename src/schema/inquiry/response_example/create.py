@@ -1,4 +1,4 @@
-from src.schema.response import ErrorResponseModel
+from src.schema.response_base import ErrorResponseModel
 from src.schema.response_example.create import create_response
 
 create_inquiry_response = create_response

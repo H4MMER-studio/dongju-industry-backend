@@ -1,7 +1,13 @@
-from pydantic import BaseModel, validator
+from pydantic import validator
+
+from src.schema.crud_base import BaseSchema
 
 
-class DeliveryBase(BaseModel):
+class DeliveryBase(BaseSchema):
+    """
+    납품실적 기본 스키마
+    """
+
     delivery_supplier: str | None
     delivery_product: str | None
     delivery_amount: int | None
@@ -11,6 +17,10 @@ class DeliveryBase(BaseModel):
 
 
 class CreateDelivery(DeliveryBase):
+    """
+    납품실적 생성 스키마
+    """
+
     delivery_supplier: str
     delivery_product: str
     delivery_amount: int
@@ -37,5 +47,11 @@ class CreateDelivery(DeliveryBase):
 
 
 class UpdateDelivery(DeliveryBase):
+    """
+    납품실적 수정 스키마
+    """
+
     class Config:
-        schema_extra: dict[str, dict] = {"example": {}}
+        schema_extra: dict[str, dict] = {
+            "example": {"delivery_product": "수정하려는 납품실적 제품"}
+        }

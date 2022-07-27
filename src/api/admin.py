@@ -19,7 +19,7 @@ async def sign_up(request: Request, insert_data: CreateAdmin) -> JSONResponse:
 
         else:
             return JSONResponse(
-                content={"detail": "database error"},
+                content={"detail": "Database Error"},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -46,8 +46,7 @@ async def sing_in(request: Request, user_data: CreateAdmin) -> JSONResponse:
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except Exception as error:

@@ -1,26 +1,44 @@
-from src.schema.response import ErrorResponseModel, GetResponseModel
+from src.schema.response_base import ErrorResponseModel, GetResponseModel
 
 get_certification_response = {
     "200": {
         "model": GetResponseModel,
-        "description": "성공",
+        "description": "엔티티 조회",
         "content": {
             "application/json": {
-                "example": {
-                    "data": {
-                        "_id": "624db4e86a6b5d4406086417",
-                        "created_at": "2022-04-07T01:00:12.819961+09:00",
-                        "updated_at": "null",
-                        "deleted_at": "null",
-                        "certification_type": "test-results",
-                        "certification_title": "버블 댐퍼",
-                        "certification_content": "null",
-                        "certification_date": "2012. 09. 04 - 2012. 09. 21",
-                        "certification_organization": "한국기계전자시험연구원",
-                        "certification_images": [
-                            {"name": "", "url": "",},
-                            {"name": "", "url": "",},
-                        ],
+                "examples": {
+                    "Success": {
+                        "summary": "데이터베이스에 엔티티가 존재하는 경우",
+                        "value": {
+                            "data": {
+                                "_id": "624db4e86a6b5d4406086417",
+                                "created_at": "2022-04-07",
+                                "updated_at": "null",
+                                "deleted_at": "null",
+                                "certification_type": "test-results",
+                                "certification_title": "버블 댐퍼",
+                                "certification_content": "null",
+                                "certification_start_date": "2012. 09. 04",
+                                "certification_end_date": "2012. 09. 21",
+                                "certification_organization": "한국기계전자시험연구원",
+                                "certification_images": [
+                                    {
+                                        "name": "",
+                                        "url": "",
+                                        "key": "",
+                                    },
+                                    {
+                                        "name": "",
+                                        "url": "",
+                                        "key": "",
+                                    },
+                                ],
+                            }
+                        }
+                    },
+                    "Not Found": {
+                        "summary": "데이터베이스에 엔티티가 존재하지 않는 경우",
+                        "value": {"data": []}
                     }
                 }
             }
@@ -36,10 +54,5 @@ get_certification_response = {
                 }
             }
         },
-    },
-    "404": {
-        "model": GetResponseModel,
-        "description": "존재하지 않는 엔티티",
-        "content": {"application/json": {"example": {"data": []}}},
-    },
+    }
 }

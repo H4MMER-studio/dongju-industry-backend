@@ -1,9 +1,15 @@
 from enum import Enum
 
-from pydantic import BaseModel, EmailStr
+from pydantic import EmailStr
+
+from src.schema.crud_base import BaseSchema
 
 
 class ProductType(str, Enum):
+    """
+    제품 종류 이넘(Enum) 클래스
+    """
+
     AIR_CONDITIONER = "air-conditioner"
     FREEZE_PROTECTION_DAMPER_COIL = "freeze-protection-damper-coil"
     EXHAUST_UNIT = "exhaust-unit"
@@ -12,12 +18,20 @@ class ProductType(str, Enum):
 
 
 class InquiryType(str, Enum):
+    """
+    고객문의 종류 이넘(Enum) 클래스
+    """
+
     ESTIMATE = "estimate"
     AS = "after-service"
     ETC = "etc"
 
 
-class InquiryBase(BaseModel):
+class InquiryBase(BaseSchema):
+    """
+    고객문의 기본 스키마
+    """
+
     inquiry_type: InquiryType | None
     inquiry_title: str | None
     inquiry_email: EmailStr | None
@@ -30,6 +44,10 @@ class InquiryBase(BaseModel):
 
 
 class CreateInquiry(InquiryBase):
+    """
+    고객문의 생성 스키마
+    """
+
     inquiry_type: InquiryType
     inquiry_product_type: ProductType
     inquiry_title: str
@@ -55,5 +73,9 @@ class CreateInquiry(InquiryBase):
 
 
 class UpdateInquiry(InquiryBase):
+    """
+    고객문의 수정 스키마
+    """
+
     class Config:
         schema_extra: dict[str, dict] = {"example": {}}

@@ -1,7 +1,7 @@
-from src.schema.response import ErrorResponseModel
+from src.schema.response_base import ErrorResponseModel
 from src.schema.response_example.create import create_response
 
-create_history_response = create_response
+create_history_response = create_response.copy()
 
 create_history_response["422"] = {
     "model": ErrorResponseModel,

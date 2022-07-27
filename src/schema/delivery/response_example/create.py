@@ -1,7 +1,7 @@
-from src.schema.response import ErrorResponseModel
+from src.schema.response_base import ErrorResponseModel
 from src.schema.response_example.create import create_response
 
-create_delivery_response = create_response
+create_delivery_response = create_response.copy()
 
 create_delivery_response["422"] = {
     "model": ErrorResponseModel,

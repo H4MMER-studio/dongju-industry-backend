@@ -11,14 +11,16 @@ from src.schema import CreateAdmin, UpdateAdmin
 
 class CRUDAdmin(CRUDBase[CreateAdmin, UpdateAdmin]):
     async def auth_user(
-        self, request: Request, authorization=Header(...)
+        self,
+        request: Request,
+        Authorization=Header(..., description="관리자 계정의 액세스 토큰 값"),
     ) -> bool:
         """
         에러 핸들링 필요
         """
         try:
             payload = jwt.decode(
-                token=authorization,
+                token=Authorization,
                 key=get_settings().SECRET_KEY,
                 algorithms=[get_settings().ALGORITHM],
             )
@@ -32,10 +34,7 @@ class CRUDAdmin(CRUDBase[CreateAdmin, UpdateAdmin]):
             elif not request.app.db[self.collection].find_one(
                 {"admin_id": admin_id}
             ):
-                raise HTTPException(
-                    detail="not found",
-                    status_code=status.HTTP_404_NOT_FOUND,
-                )
+                return False
 
             else:
                 return True
@@ -60,7 +59,9 @@ class CRUDAdmin(CRUDBase[CreateAdmin, UpdateAdmin]):
         elif not password_context.verify(
             secret=user_data.admin_password, hash=user["admin_password"]
         ):
-            raise
+            raise HTTPException(
+                detail="unauthorized", status_code=status.HTTP_401_UNAUTHORIZED
+            )
 
         else:
             encoded_data = {
