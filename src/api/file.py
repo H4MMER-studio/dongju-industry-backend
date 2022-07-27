@@ -10,8 +10,8 @@ SINGLE_PREFIX = "/file"
 router = APIRouter(prefix=SINGLE_PREFIX)
 
 
-@router.get(path="/{file_name}", responses=file_download_response)
-async def download_file(file_name: str) -> Response | JSONResponse:
+@router.get(path="/{object_key}", responses=file_download_response)
+async def download_file(object_key: str) -> Response | JSONResponse:
     """
     파일 다운로드(GET) 엔드포인트
 
@@ -19,7 +19,7 @@ async def download_file(file_name: str) -> Response | JSONResponse:
     1. file_name
     """
     try:
-        file = await file_crud.download(file_name)
+        file = await file_crud.download(object_key)
 
         return Response(content=file, status_code=status.HTTP_200_OK)
 

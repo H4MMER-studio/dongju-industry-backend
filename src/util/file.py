@@ -63,8 +63,7 @@ class CRUDFile:
 
         return result
 
-    async def download(self, file_name: str) -> bytes | None:
-        object_key = self.file_context.hash(file_name)
+    async def download(self, object_key: str) -> bytes | None:
         async with self.session.resource(self.service_name) as service:
             object = await service.Object(
                 bucket_name=self.bucket_name, key=object_key
