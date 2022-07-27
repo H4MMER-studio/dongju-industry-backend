@@ -27,7 +27,7 @@ class CRUDDelivery(CRUDBase[CreateDelivery, UpdateDelivery]):
         )
         if result["size"] and not type == "search":
             for data in result["data"]:
-                data["delivery_supplier"] = data.pop("deliver_supplier")[
+                data["delivery_supplier"] = data.pop("delivery_supplier")[
                     "composed"
                 ]
                 data["inquiry_person_name"] = data.pop("delivery_product")[
@@ -40,7 +40,8 @@ class CRUDDelivery(CRUDBase[CreateDelivery, UpdateDelivery]):
         self, request: Request, insert_data: CreateDelivery
     ) -> bool:
         insert_data = await create_decompsed_korean_field(
-            schema=insert_data, fields=["deliver_supplier", "delivery_product"]
+            schema=insert_data,
+            fields=["delivery_supplier", "delivery_product"],
         )
 
         result = await super().create(request=request, insert_data=insert_data)
