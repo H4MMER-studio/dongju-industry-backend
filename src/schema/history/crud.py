@@ -39,5 +39,8 @@ class UpdateHistory(HistoryBase):
 
     class Config:
         schema_exatra: dict[str, dict] = {
-            "example": {"history_content": "수정할 연혁 내용"}
+            "example": {
+                "history_id": "624db4d66a6b5d4406086415",
+                "history_content": "수정할 연혁 내용",
+            }
         }

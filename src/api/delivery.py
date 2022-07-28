@@ -42,10 +42,21 @@ async def get_deliveries(
     """
     납품실적 다량 조회(GET) 엔드포인트
 
-    아래 세 개는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
+    아래 여섯 개는 선택적으로 전달할 수 있는 쿼리 파라미터(Query Parameter)
     1. sort
     2. skip
     3. limit
+    4. type
+    5. field
+    6. value
+
+    이때 type 쿼리 파라미터의 경우 아래와 같이 두 가지 값을 가질 수 있습니다.
+    1. null : 기본적인 다량 조회
+    2. search : 키워드 검색
+
+    field 쿼리 파라미터의 경우 아래와 같이 두 가지 값을 가질 수 있다.
+    1. 납품처(delivery_supplier)
+    2. 품명(delivery_product)
 
     이때 기본적으로 아래 순서를 기준으로 오름차순 정렬하여 결과를 반환한다.
     1. 납품연도(delivery_year)
@@ -71,8 +82,7 @@ async def get_deliveries(
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except Exception as error:
@@ -108,7 +118,13 @@ async def create_delivery(
             request=request, insert_data=insert_data
         ):
             return JSONResponse(
-                content={"detail": "success"}, status_code=status.HTTP_200_OK
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+            )
+
+        else:
+            return JSONResponse(
+                content={"detail": "Database Error"},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     except Exception as error:
@@ -145,13 +161,12 @@ async def update_delivery_partialy(
             request=request, id=delivery_id, update_data=update_data
         ):
             return JSONResponse(
-                content={"detail": "success"}, status_code=status.HTTP_200_OK
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
             )
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:
@@ -182,12 +197,11 @@ async def delete_delivery(request: Request, delivery_id: str) -> JSONResponse:
     try:
         if await delivery_crud.delete(request=request, id=delivery_id):
             return JSONResponse(
-                content={"detail": "success"}, status_code=status.HTTP_200_OK
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
             )
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:

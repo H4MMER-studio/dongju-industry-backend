@@ -42,8 +42,7 @@ async def get_certification(
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:
@@ -116,8 +115,8 @@ async def get_certifications(
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []},
+                status_code=status.HTTP_200_OK,
             )
 
     except Exception as error:
@@ -171,13 +170,18 @@ async def create_certification(request: Request) -> JSONResponse:
             collection_name="certification",
         )
 
-        await certification_crud.create(
+        if await certification_crud.create(
             request=request, insert_data=insert_data
-        )
+        ):
+            return JSONResponse(
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+            )
 
-        return JSONResponse(
-            content={"detail": "success"}, status_code=status.HTTP_200_OK
-        )
+        else:
+            return JSONResponse(
+                content={"datail": "Database Error"},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     except ValidationError as validation_error:
         return JSONResponse(
@@ -249,13 +253,12 @@ async def update_certification_partialy(
             request=request, id=certification_id, update_data=update_data
         ):
             return JSONResponse(
-                content={"detail": "success"}, status_code=status.HTTP_200_OK
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
             )
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:
@@ -290,13 +293,12 @@ async def delete_certification(
             request=request, id=certification_id
         ):
             return JSONResponse(
-                content={"detail": "success"}, status_code=status.HTTP_200_OK
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
             )
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:

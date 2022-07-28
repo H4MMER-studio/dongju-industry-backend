@@ -39,8 +39,7 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:
@@ -107,8 +106,7 @@ async def get_notices(
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except Exception as error:
@@ -155,7 +153,7 @@ async def create_notice(request: Request) -> JSONResponse:
         await notice_crud.create(insert_data=insert_data, request=request)
 
         return JSONResponse(
-            content={"detail": "success"}, status_code=status.HTTP_200_OK
+            content={"detail": "Success"}, status_code=status.HTTP_200_OK
         )
 
     except ValidationError as validation_error:
@@ -215,13 +213,12 @@ async def update_notice_partialy(
             request=request, id=notice_id, update_data=update_data
         ):
             return JSONResponse(
-                content={"detail": "success"}, status_code=status.HTTP_200_OK
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
             )
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:
@@ -252,12 +249,11 @@ async def delete_notice(request: Request, notice_id: str) -> JSONResponse:
     try:
         if await notice_crud.delete(request=request, id=notice_id):
             return JSONResponse(
-                content={"detail": "success"}, status_code=status.HTTP_200_OK
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
             )
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:

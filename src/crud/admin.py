@@ -10,13 +10,19 @@ from src.schema import CreateAdmin, UpdateAdmin
 
 
 class CRUDAdmin(CRUDBase[CreateAdmin, UpdateAdmin]):
+    def __init__(self, collection: str) -> None:
+        super().__init__(collection)
+        self.password_context = CryptContext(
+            schemes=["bcrypt"], deprecated="auto"
+        )
+
     async def auth_user(
         self,
         request: Request,
         Authorization=Header(..., description="관리자 계정의 액세스 토큰 값"),
     ) -> bool:
         """
-        에러 핸들링 필요
+        관리자 계정 액세스 토큰 확인 메서드
         """
         try:
             payload = jwt.decode(
@@ -27,14 +33,17 @@ class CRUDAdmin(CRUDBase[CreateAdmin, UpdateAdmin]):
             admin_id = payload.get("sub")
             if not admin_id:
                 raise HTTPException(
-                    detail="access token doesn't exist",
-                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Access Token Not Found",
+                    status_code=status.HTTP_403_FORBIDDEN,
                 )
 
             elif not request.app.db[self.collection].find_one(
                 {"admin_id": admin_id}
             ):
-                return False
+                raise HTTPException(
+                    detail="Admin User Not Found",
+                    status_code=status.HTTP_403_FORBIDDEN,
+                )
 
             else:
                 return True
@@ -48,7 +57,9 @@ class CRUDAdmin(CRUDBase[CreateAdmin, UpdateAdmin]):
     async def get_one(
         self, request: Request, user_data: CreateAdmin
     ) -> dict | None:
-        password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        """
+        관리자 계정 조회 메서드
+        """
         user = await request.app.db[self.collection].find_one(
             {"admin_id": user_data.admin_id}
         )
@@ -56,11 +67,11 @@ class CRUDAdmin(CRUDBase[CreateAdmin, UpdateAdmin]):
         if not user:
             return None
 
-        elif not password_context.verify(
+        elif not self.password_context.verify(
             secret=user_data.admin_password, hash=user["admin_password"]
         ):
             raise HTTPException(
-                detail="unauthorized", status_code=status.HTTP_401_UNAUTHORIZED
+                detail="Unauthorized", status_code=status.HTTP_401_UNAUTHORIZED
             )
 
         else:
@@ -73,15 +84,18 @@ class CRUDAdmin(CRUDBase[CreateAdmin, UpdateAdmin]):
                 key=get_settings().SECRET_KEY,
                 algorithm=get_settings().ALGORITHM,
             )
+
             return access_token
 
     async def create(self, request: Request, insert_data: CreateAdmin) -> bool:
-        password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-        insert_data.admin_password = password_context.hash(
+        """
+        관리자 계정 생성 메서드
+        """
+        insert_data.admin_password = self.password_context.hash(
             secret=insert_data.admin_password
         )
-
         result = await super().create(request=request, insert_data=insert_data)
+
         return result
 
 

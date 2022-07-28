@@ -48,7 +48,7 @@ async def get_histories(
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
+                content={"data": []},
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
@@ -76,11 +76,16 @@ async def create_history(
     3. history_content
     """
     try:
-        await history_crud.create(request=request, insert_data=insert_data)
+        if await history_crud.create(request=request, insert_data=insert_data):
+            return JSONResponse(
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+            )
 
-        return JSONResponse(
-            content={"detail": "success"}, status_code=status.HTTP_200_OK
-        )
+        else:
+            return JSONResponse(
+                content={"detail": "Database Error"},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     except Exception as error:
         return JSONResponse(
@@ -127,13 +132,12 @@ async def update_history(
             request=request, update_data=update_data, model="history"
         ):
             return JSONResponse(
-                content={"detail": "success"}, status_code=status.HTTP_200_OK
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
             )
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:
@@ -170,12 +174,11 @@ async def delete_history(
     try:
         if await history_crud.bulk_delete(request=request, ids=history_ids):
             return JSONResponse(
-                content={"detail": "success"}, status_code=status.HTTP_200_OK
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
             )
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:

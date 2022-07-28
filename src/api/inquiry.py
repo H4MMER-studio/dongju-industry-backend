@@ -33,8 +33,7 @@ async def get_inquiry(request: Request, inquiry_id: str):
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except InvalidId as invalid_id_error:
@@ -99,8 +98,7 @@ async def get_inquries(
 
         else:
             return JSONResponse(
-                content={"detail": "not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except Exception as error:
@@ -144,7 +142,7 @@ async def create_inquiry(
         await inquiry_crud.create(request=request, insert_data=insert_data)
 
         return JSONResponse(
-            content={"detail": "success"}, status_code=status.HTTP_200_OK
+            content={"detail": "Success"}, status_code=status.HTTP_200_OK
         )
 
     except Exception as error:
