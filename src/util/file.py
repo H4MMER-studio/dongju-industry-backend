@@ -1,8 +1,9 @@
 import re
+import secrets
+from urllib import parse
 
 from aioboto3 import Session
 from fastapi import UploadFile
-from passlib.context import CryptContext
 
 from src.core import get_settings
 
@@ -21,9 +22,6 @@ class CRUDFile:
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key,
         )
-        self.file_context = CryptContext(
-            schemes=["sha256_crypt"], deprecated="auto"
-        )
 
     async def upload(self, files: list[UploadFile]) -> list[dict[str, str]]:
         result: list[dict[str, str]] = []
@@ -38,19 +36,28 @@ class CRUDFile:
 
             async with self.session.resource(self.service_name) as service:
                 bucket = await service.Bucket(self.bucket_name)
-                object_key = self.file_context.hash(secret=file_path)
+                object_key = secrets.token_hex(24)
+
+                objects = [
+                    object
+                    async for object in bucket.objects.filter(
+                        Prefix=object_key
+                    )
+                ]
+                if len(objects) > 0 and (objects[0].key == object_key):
+                    object_key = secrets.token_hex(24)
 
                 await bucket.upload_fileobj(
                     Fileobj=file_object.file,
                     Key=object_key,
                     ExtraArgs={
                         "ContentType": file_object.content_type,
-                        "Tagging": f"Name={file_path}",
+                        "Tagging": parse.urlencode({"Name": file_path}),
                     },
                 )
 
                 file_url = (
-                    f"https://{self.bucket_name}.s3.amazonaws.com/{file_path}"
+                    f"https://{self.bucket_name}.s3.amazonaws.com/{object_key}"
                 )
                 result.append(
                     {

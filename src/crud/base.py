@@ -18,11 +18,25 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
 
     async def get_one(self, request: Request, id: str) -> dict | None:
         session = request.app.db[self.collection]
-        if not (document := session.find_one({"_id": ObjectId(id)})):
+        if not (document := await session.find_one({"_id": ObjectId(id)})):
             return None
 
         else:
             document["_id"] = str(document["_id"])
+            document["created_at"] = datetime_to_str(
+                datetime=document["created_at"]
+            )
+
+            if document["updated_at"]:
+                document["updated_at"] = datetime_to_str(
+                    datetime=document["updated_at"]
+                )
+
+            if document["deleted_at"]:
+                document["deleted_at"] = datetime_to_str(
+                    datetime=document["deleted_at"]
+                )
+
             return document
 
     async def get_multi(
@@ -50,11 +64,11 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
                 "$options": "i",
             }
 
-        sort_field: list = []
+        sort_fields: list = []
         if sort:
             for query_string in sort:
-                field, option = query_string.split(" ")
-                field = field.replace("-", "_")
+                sort_field, option = query_string.split(" ")
+                converted_sort_field = sort_field.replace("-", "_")
 
                 if option == "asc":
                     option = ASCENDING
@@ -63,17 +77,17 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
                 else:
                     raise ValueError
 
-                sort_field.append((field, option))
+                sort_fields.append((converted_sort_field, option))
 
         else:
-            sort_field.append(("$natural", DESCENDING))
+            sort_fields.append(("$natural", DESCENDING))
 
         if skip:
             skip -= 1
 
         documents = await session.find(
             filter=pipeline,
-            sort=sort_field,
+            sort=sort_fields,
             skip=skip,
             limit=limit - skip,
         ).to_list(length=None)
@@ -88,17 +102,17 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
             for document in documents:
                 document["_id"] = str(document["_id"])
 
-                document["created_at"] = await datetime_to_str(
+                document["created_at"] = datetime_to_str(
                     datetime=document["created_at"]
                 )
 
                 if document["updated_at"]:
-                    document["updated_at"] = await datetime_to_str(
+                    document["updated_at"] = datetime_to_str(
                         datetime=document["updated_at"]
                     )
 
                 if document["deleted_at"]:
-                    document["deleted_at"] = await datetime_to_str(
+                    document["deleted_at"] = datetime_to_str(
                         datetime=document["deleted_at"]
                     )
 
@@ -109,12 +123,9 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
     async def create(
         self, request: Request, insert_data: CreateSchema
     ) -> bool:
-        if type(insert_data) != dict:
-            insert_data = insert_data.dict()
-        insert_data["created_at"] = await get_datetime()
-
+        insert_data.created_at = get_datetime()
         inserted_document = await request.app.db[self.collection].insert_one(
-            insert_data
+            insert_data.dict()
         )
 
         result = inserted_document.acknowledged
@@ -125,7 +136,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         self, request: Request, id: str, update_data: UpdateSchema
     ) -> bool:
         update_data = update_data.dict(exclude_none=True)
-        update_data["updated_at"] = await get_datetime()
+        update_data["updated_at"] = get_datetime()
 
         updated_document = await request.app.db[
             self.collection

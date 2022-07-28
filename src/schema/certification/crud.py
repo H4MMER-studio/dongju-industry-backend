@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from enum import Enum
 
 from src.schema.crud_base import BaseSchema
@@ -10,7 +10,7 @@ class CertificationType(str, Enum):
     """
 
     LICENSE = "license"
-    CERTIFICATION = "core-certification"
+    CORE_CERTIFICATION = "core-certification"
     PATENT = "patent"
     TEST_RESULT = "test-result"
 
@@ -23,8 +23,8 @@ class CertificationBase(BaseSchema):
     certification_type: CertificationType | None
     certification_title: str | None
     certification_content: str | None
-    certification_start_date: date | None
-    certification_end_date: date | None
+    certification_start_date: datetime | None
+    certification_end_date: datetime | None
     certification_organization: str | None
     certification_images: list[dict[str, str]] | None
 

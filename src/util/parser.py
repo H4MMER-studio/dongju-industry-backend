@@ -11,16 +11,12 @@ from src.util.file import file_crud
 Schema = TypeVar("Schema", bound=BaseModel)
 
 
-async def get_datetime() -> datetime:
+def get_datetime() -> datetime:
     return datetime.now(tz=timezone(offset=timedelta(hours=9)))
 
 
-async def datetime_to_str(datetime: datetime) -> str:
+def datetime_to_str(datetime: datetime) -> str:
     return datetime.strftime("%Y-%m-%d")
-
-
-async def str_to_datetime(date_string: str, format=str) -> datetime:
-    return datetime.strptime(date_string, format)
 
 
 async def parse_formdata(
