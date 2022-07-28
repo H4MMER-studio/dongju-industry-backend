@@ -7,7 +7,7 @@ from src.schema import CreateNotice, UpdateNotice
 
 
 class CRUDNotice(CRUDBase[CreateNotice, UpdateNotice]):
-    async def get_one(self, request: Request, id: str) -> dict | None:
+    async def get_one(self, request: Request, id: str) -> dict:
         session = request.app.db[self.collection]
 
         document = await session.find_one({"_id": ObjectId(id)})

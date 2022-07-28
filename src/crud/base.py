@@ -17,8 +17,8 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         self.collection = collection
 
     async def get_one(self, request: Request, id: str) -> dict | None:
-        db = request.app.db[self.collection]
-        if not (document := db.find_one({"_id": ObjectId(id)})):
+        session = request.app.db[self.collection]
+        if not (document := session.find_one({"_id": ObjectId(id)})):
             return None
 
         else:
@@ -34,7 +34,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         type: str | None,
         field: str | None,
         value: str | None,
-    ) -> dict | None:
+    ) -> dict:
         session = request.app.db[self.collection]
 
         pipeline: dict = {}

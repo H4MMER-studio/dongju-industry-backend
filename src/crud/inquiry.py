@@ -15,7 +15,7 @@ class CRUDIquiry(CRUDBase[CreateInquiry, UpdateInquiry]):
         type: str | None,
         field: str | None,
         value: str | None,
-    ) -> dict | None:
+    ) -> dict:
         result = await super().get_multi(
             request=request,
             skip=skip,
