@@ -21,6 +21,8 @@ router = APIRouter()
 @router.get(path=PLURAL_PREFIX, responses=get_histories_response)
 async def get_histories(
     request: Request,
+    skip: int = Query(default=0, description="페이지네이션 시작 값", example=1),
+    limit: int = Query(default=0, desciption="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
         default=["history-year desc", "history-month desc", "created_at desc"],
         description="정렬 기준",
@@ -39,7 +41,12 @@ async def get_histories(
     3. 엔티티 생성일(created_at)
     """
     try:
-        result = await history_crud.get_multi(request=request, sort=sort)
+        result = await history_crud.get_multi(
+            request=request,
+            skip=skip,
+            limit=limit,
+            sort=sort,
+        )
         if result["size"]:
             return JSONResponse(
                 content=result,
@@ -48,8 +55,7 @@ async def get_histories(
 
         else:
             return JSONResponse(
-                content={"data": []},
-                status_code=status.HTTP_404_NOT_FOUND,
+                content={"data": []}, status_code=status.HTTP_200_OK
             )
 
     except Exception as error:
@@ -129,7 +135,7 @@ async def update_history(
     try:
 
         if await history_crud.bulk_update(
-            request=request, update_data=update_data, model="history"
+            request=request, update_data=update_data
         ):
             return JSONResponse(
                 content={"detail": "Success"}, status_code=status.HTTP_200_OK

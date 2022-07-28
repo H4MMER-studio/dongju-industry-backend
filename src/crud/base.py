@@ -1,8 +1,8 @@
+import re
 from typing import Generic, TypeVar
 
 from bson.objectid import ObjectId
 from fastapi import Request
-from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from pymongo import ASCENDING, DESCENDING, DeleteOne, UpdateOne
 
@@ -145,14 +145,18 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         return deleted_document
 
     async def bulk_update(
-        self, request: Request, update_data: list[UpdateSchema], model: str
+        self, request: Request, update_data: list[UpdateSchema]
     ) -> bool:
         query: list[UpdateOne] = []
 
         for data in update_data:
-            id = ObjectId(data.dict(exclude_none=True).pop(f"{model}_id"))
+            converted_data = data.dict(exclude_none=True)
+            for key in data.keys():
+                if regex_object := re.match(r"[a-z]+\_id", key):
+                    object_id = converted_data.pop(regex_object.group())
+
             query.append(
-                UpdateOne({"_id": id}, {"$set": jsonable_encoder(data)})
+                UpdateOne({"_id": object_id}, {"$set": converted_data})
             )
 
         updated_document = await request.app.db[self.collection].bulk_write(
