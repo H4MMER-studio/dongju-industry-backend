@@ -247,13 +247,21 @@ async def delete_notice(request: Request, notice_id: str) -> JSONResponse:
     1. _id
     """
     try:
-        if await notice_crud.delete(request=request, id=notice_id):
+        result = await notice_crud.delete(request=request, id=notice_id)
+        if result["status"]:
             return JSONResponse(
                 content={"detail": "Success"}, status_code=status.HTTP_200_OK
             )
-        else:
+
+        elif result["detail"] == "Not Found":
             return JSONResponse(
                 content={"data": []}, status_code=status.HTTP_200_OK
+            )
+
+        else:
+            return JSONResponse(
+                content={"detail": result["detail"]},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     except InvalidId as invalid_id_error:

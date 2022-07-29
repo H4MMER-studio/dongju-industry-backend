@@ -2,7 +2,7 @@ from fastapi import Request
 
 from src.crud.base import CRUDBase
 from src.schema import CreateCertification, UpdateCertification
-from src.util import datetime_to_str
+from src.util import datetime_to_str, file_crud
 
 
 class CRUDCertification(CRUDBase[CreateCertification, UpdateCertification]):
@@ -51,6 +51,22 @@ class CRUDCertification(CRUDBase[CreateCertification, UpdateCertification]):
                     document["certification_end_date"] = datetime_to_str(
                         datetime=document["certification_end_date"],
                     )
+
+        return result
+
+    async def delete(self, request: Request, id: str) -> dict:
+        result: dict = {"status": True, "detail": ""}
+        deleted_document = await super().delete(request, id)
+        if not deleted_document:
+            result["status"] = False
+            result["detail"] = "Not Found"
+
+        else:
+            for image in deleted_document["certification_images"]:
+                result = await file_crud.delete(object_key=image["key"])
+                if result["ResponseMetadata"]["HTTPStatusCode"] != 204:
+                    result["status"] = False
+                    result["detail"] = "AWS S3"
 
         return result
 

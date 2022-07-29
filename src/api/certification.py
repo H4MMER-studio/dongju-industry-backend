@@ -293,16 +293,23 @@ async def delete_certification(
     1. _id
     """
     try:
-        if await certification_crud.delete(
+        result = await certification_crud.delete(
             request=request, id=certification_id
-        ):
+        )
+        if result["status"]:
             return JSONResponse(
                 content={"detail": "Success"}, status_code=status.HTTP_200_OK
             )
 
-        else:
+        elif result["detail"] == "Not Found":
             return JSONResponse(
                 content={"data": []}, status_code=status.HTTP_200_OK
+            )
+
+        else:
+            return JSONResponse(
+                content={"detail": result["detail"]},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     except InvalidId as invalid_id_error:

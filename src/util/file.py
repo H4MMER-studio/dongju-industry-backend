@@ -80,9 +80,13 @@ class CRUDFile:
 
             return file
 
-    async def delete(self, file_name: str) -> None:
-        async with self.session.client(self.service_name) as service:
-            await service.objects.filter(Prefix=file_name).delete()
+    async def delete(self, object_key: str) -> dict:
+        async with self.session.resource(self.service_name) as service:
+            object = await service.Object(
+                bucket_name=self.bucket_name, key=object_key
+            )
+            response = await object.delete()
+            return response
 
 
 file_crud = CRUDFile(

@@ -122,11 +122,18 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         return result
 
     async def create(
-        self, request: Request, insert_data: CreateSchema
+        self, request: Request, insert_data: CreateSchema | dict
     ) -> bool:
-        insert_data.created_at = get_datetime()
+        if type(insert_data) is dict:
+            converted_insert_data = insert_data.copy()
+
+        else:
+            converted_insert_data = insert_data.dict()  # type: ignore
+
+        converted_insert_data["created_at"] = get_datetime()
+
         inserted_document = await request.app.db[self.collection].insert_one(
-            insert_data.dict()
+            converted_insert_data
         )
 
         result = inserted_document.acknowledged
@@ -135,7 +142,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
 
     async def update(
         self, request: Request, id: str, update_data: UpdateSchema
-    ) -> bool:
+    ) -> dict:
         update_data = update_data.dict(exclude_none=True)
         update_data["updated_at"] = get_datetime()
 
@@ -149,7 +156,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
 
         return updated_document
 
-    async def delete(self, request: Request, id: str) -> bool:
+    async def delete(self, request: Request, id: str) -> dict:
         deleted_document = await request.app.db[
             self.collection
         ].find_one_and_delete({"_id": ObjectId(id)})
@@ -178,11 +185,9 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
                 )
             )
 
-        print(query)
         updated_document = await request.app.db[self.collection].bulk_write(
             query
         )
-
         return (
             True
             if (updated_document.modified_count == len(update_data))

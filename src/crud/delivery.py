@@ -36,9 +36,7 @@ class CRUDDelivery(CRUDBase[CreateDelivery, UpdateDelivery]):
 
         return result
 
-    async def create(
-        self, request: Request, insert_data: CreateDelivery
-    ) -> bool:
+    async def create(self, request: Request, insert_data: dict) -> bool:
         insert_data = await create_decompsed_korean_field(
             schema=insert_data,
             fields=["delivery_supplier", "delivery_product"],
