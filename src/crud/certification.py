@@ -63,8 +63,8 @@ class CRUDCertification(CRUDBase[CreateCertification, UpdateCertification]):
 
         else:
             for image in deleted_document["certification_images"]:
-                result = await file_crud.delete(object_key=image["key"])
-                if result["ResponseMetadata"]["HTTPStatusCode"] != 204:
+                response = await file_crud.delete(object_key=image["key"])
+                if response["ResponseMetadata"]["HTTPStatusCode"] != 204:
                     result["status"] = False
                     result["detail"] = "AWS S3"
 
