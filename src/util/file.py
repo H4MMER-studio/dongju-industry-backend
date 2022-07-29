@@ -1,9 +1,11 @@
 import re
 import secrets
+from tempfile import TemporaryFile
 from urllib import parse
 
 from aioboto3 import Session
 from fastapi import UploadFile
+from pdf2image import convert_from_bytes
 
 from src.core import get_settings
 
@@ -23,16 +25,52 @@ class CRUDFile:
             aws_secret_access_key=aws_secret_access_key,
         )
 
-    async def upload(self, files: list[UploadFile]) -> list[dict[str, str]]:
+    async def upload(
+        self, files: list[UploadFile], need_converted: bool = False
+    ) -> list[dict[str, str]]:
         result: list[dict[str, str]] = []
+        converted_files: list[UploadFile] = []
 
-        for file_object in files:
-            file_path = file_object.filename.replace(" ", "_")
+        if need_converted:
+            for file_object in files:
+                if file_object.content_type.split("/")[1] == "pdf":
+                    byte_object = file_object.file.read()
+                    images = convert_from_bytes(pdf_file=byte_object)
 
-            if re.match(r"(image\/)", file_object.content_type):
+                    for idx, image in enumerate(images):
+                        temp_file = TemporaryFile()
+                        image.save(fp=temp_file, format="jpeg")
+                        temp_file.seek(0)
+                        converted_files.append(
+                            UploadFile(
+                                filename=f"{idx} {file_object.filename}",
+                                file=temp_file,
+                                content_type="image/jpeg",
+                            )
+                        )
+
+                else:
+                    converted_files.append(file_object)
+
+        else:
+            converted_files = files.copy()
+
+        for file_object in converted_files:
+            file_path = re.sub(
+                pattern=r"\W", repl="", string=file_object.filename
+            ).replace(" ", "_")
+            _, media_type = file_object.content_type.split("/")
+            if media_type in ["jpeg", "png"]:
                 file_type = "image"
+
+            elif media_type == "pdf":
+                file_type = "pdf"
+
             else:
-                file_type = "others"
+                filename = file_object.filename
+                raise ValueError(
+                    f"Type of {filename} must be jpg/jpeg/png or pdf"
+                )
 
             async with self.session.resource(self.service_name) as service:
                 bucket = await service.Bucket(self.bucket_name)
@@ -67,7 +105,7 @@ class CRUDFile:
                         "key": object_key,
                     }
                 )
-
+        print(result)
         return result
 
     async def download(self, object_key: str) -> bytes | None:

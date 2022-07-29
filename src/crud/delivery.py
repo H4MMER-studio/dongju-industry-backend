@@ -1,6 +1,6 @@
 from fastapi import Request
 
-from src.crud.base import CRUDBase
+from src.crud.base import CreateSchema, CRUDBase
 from src.schema import CreateDelivery, UpdateDelivery
 from src.util import create_decompsed_korean_field
 
@@ -30,19 +30,35 @@ class CRUDDelivery(CRUDBase[CreateDelivery, UpdateDelivery]):
                 data["delivery_supplier"] = data.pop("delivery_supplier")[
                     "composed"
                 ]
-                data["inquiry_person_name"] = data.pop("delivery_product")[
+                data["delivery_product"] = data.pop("delivery_product")[
                     "composed"
                 ]
 
         return result
 
-    async def create(self, request: Request, insert_data: dict) -> bool:
-        insert_data = await create_decompsed_korean_field(
-            schema=insert_data,
+    async def create(
+        self, request: Request, insert_data: CreateSchema
+    ) -> bool:
+        converted_insert_data = await create_decompsed_korean_field(
+            data=insert_data.dict(),
             fields=["delivery_supplier", "delivery_product"],
         )
 
-        result = await super().create(request=request, insert_data=insert_data)
+        result = await super().create(
+            request=request, insert_data=converted_insert_data
+        )
+        return result
+
+    async def update(
+        self, request: Request, id: str, update_data: UpdateDelivery
+    ) -> dict:
+        converted_update_data = await create_decompsed_korean_field(
+            data=update_data.dict(exclude_none=True),
+            fields=["delivery_supplier", "delivery_product"],
+        )
+        result = await super().update(
+            request=request, id=id, update_data=converted_update_data
+        )
         return result
 
 

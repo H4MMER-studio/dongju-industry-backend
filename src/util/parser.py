@@ -23,7 +23,7 @@ async def parse_formdata(
     form_data: FormData, schema: Schema, collection_name: str
 ) -> Schema:
     if not form_data:
-        raise ValidationError
+        raise ValidationError()
 
     else:
         files: list[UploadFile] = []
@@ -37,9 +37,18 @@ async def parse_formdata(
             else:
                 fields[key] = value
 
-        uploaded_files = await file_crud.upload(files=files)
+        if collection_name == "certification":
+            need_converted = True
 
+        else:
+            need_converted = False
+
+        uploaded_files = await file_crud.upload(
+            files=files, need_converted=need_converted
+        )
+        print(uploaded_files)
         for uploaded_file in uploaded_files:
+            print(uploaded_file)
             if (file_type := uploaded_file.pop("type")) == "image":
                 file_field = f"{collection_name}_{file_type}s"
             else:
@@ -55,18 +64,16 @@ async def parse_formdata(
         return insert_data
 
 
-async def create_decompsed_korean_field(schema: Schema, fields):
-    schema_dict: dict = schema.dict()
-
+async def create_decompsed_korean_field(data: dict, fields):
     for field in fields:
-        for key, value in schema_dict.items():
+        for key, value in data.items():
             if field == key:
-                schema_dict[key] = {
+                data[key] = {
                     "composed": value,
                     "decomposed": await decompose_korean(input=value),
                 }
 
-    return schema_dict
+    return data
 
 
 async def decompose_korean(input: str) -> str:

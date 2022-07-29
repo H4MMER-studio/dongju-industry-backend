@@ -39,12 +39,26 @@ class CRUDIquiry(CRUDBase[CreateInquiry, UpdateInquiry]):
     async def create(
         self, request: Request, insert_data: CreateInquiry
     ) -> bool:
-        insert_data = await create_decompsed_korean_field(
-            schema=insert_data,
+        converted_insert_data = await create_decompsed_korean_field(
+            schema=insert_data.dict(),
             fields=["inquiry_person_name", "inquiry_company_name"],
         )
 
-        result = await super().create(request=request, insert_data=insert_data)
+        result = await super().create(
+            request=request, insert_data=converted_insert_data
+        )
+        return result
+
+    async def update(
+        self, request: Request, id: str, update_data: UpdateInquiry
+    ) -> dict:
+        converted_update_data = await create_decompsed_korean_field(
+            schema=update_data.dict(exclude_none=True),
+            fields=["inquiry_person_name", "inquiry_company_name"],
+        )
+        result = await super().update(
+            request=request, id=id, update_data=converted_update_data
+        )
         return result
 
 

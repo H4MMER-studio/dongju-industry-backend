@@ -93,10 +93,12 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         ).to_list(length=None)
 
         if type == "search":
-            documents = [
-                {converted_field: document[converted_field]["composed"]}
-                for document in documents
-            ]
+            documents = list(
+                {
+                    document[converted_field]["composed"]
+                    for document in documents
+                }
+            )
 
         else:
             if len(documents) > 0:
@@ -141,16 +143,23 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         return result
 
     async def update(
-        self, request: Request, id: str, update_data: UpdateSchema
+        self, request: Request, id: str, update_data: UpdateSchema | dict
     ) -> dict:
-        update_data = update_data.dict(exclude_none=True)
-        update_data["updated_at"] = get_datetime()
+        if type(update_data) is dict:
+            converted_update_data = update_data.copy()
+
+        else:
+            converted_update_data = update_data.dict(  # type: ignore
+                exclude_none=True
+            )
+
+        converted_update_data["updated_at"] = get_datetime()
 
         updated_document = await request.app.db[
             self.collection
         ].find_one_and_update(
             {"_id": ObjectId(id)},
-            {"$set": update_data},
+            {"$set": converted_update_data},
             upsert=False,
         )
 

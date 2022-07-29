@@ -31,7 +31,7 @@ class CreateDelivery(DeliveryBase):
 
     delivery_supplier: str
     delivery_product: str
-    delivery_amount: int
+    delivery_amount: int = 0
     delivery_year: int
 
     class Config:
