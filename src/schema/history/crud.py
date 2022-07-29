@@ -1,3 +1,5 @@
+from pydantic import validator
+
 from src.schema.crud_base import BaseSchema
 
 
@@ -9,6 +11,14 @@ class HistoryBase(BaseSchema):
     history_year: int | None
     history_month: int | None
     history_content: str | None
+
+    @validator("history_month")
+    def validate_month(cls, value: int) -> int:
+        if value < 1 or value > 12:
+            raise ValueError("history_month must be between 1 and 12")
+
+        else:
+            return value
 
 
 class CreateHistory(HistoryBase):

@@ -15,6 +15,14 @@ class DeliveryBase(BaseSchema):
     delivery_month: int | None
     delivery_reference: str | None
 
+    @validator("delivery_month")
+    def validate_month(cls, value: int) -> int:
+        if value < 1 or value > 12:
+            raise ValueError("delivery_month must be between 1 and 12")
+
+        else:
+            return value
+
 
 class CreateDelivery(DeliveryBase):
     """
@@ -25,13 +33,6 @@ class CreateDelivery(DeliveryBase):
     delivery_product: str
     delivery_amount: int
     delivery_year: int
-
-    @validator("delivery_month")
-    def validate_month(cls, value) -> int:
-        if value < 1 or value > 12:
-            raise ValueError("delivery_month must be between 1 and 12")
-
-        return value
 
     class Config:
         schema_extra: dict[str, dict] = {

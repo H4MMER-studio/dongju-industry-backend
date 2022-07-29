@@ -15,7 +15,13 @@ class CRUDHistory(CRUDBase[CreateHistory, UpdateHistory]):
         sort: list[str],
     ) -> dict:
         result = await super().get_multi(
-            request=request, skip=skip, limit=limit, sort=sort
+            request=request,
+            skip=skip,
+            limit=limit,
+            sort=sort,
+            type=None,
+            field=None,
+            value=None,
         )
         if result["size"]:
             converted_data: list[dict] = []

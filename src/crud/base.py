@@ -99,22 +99,23 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
             ]
 
         else:
-            for document in documents:
-                document["_id"] = str(document["_id"])
+            if len(documents) > 0:
+                for document in documents:
+                    document["_id"] = str(document["_id"])
 
-                document["created_at"] = datetime_to_str(
-                    datetime=document["created_at"]
-                )
-
-                if document["updated_at"]:
-                    document["updated_at"] = datetime_to_str(
-                        datetime=document["updated_at"]
+                    document["created_at"] = datetime_to_str(
+                        datetime=document["created_at"]
                     )
 
-                if document["deleted_at"]:
-                    document["deleted_at"] = datetime_to_str(
-                        datetime=document["deleted_at"]
-                    )
+                    if document["updated_at"]:
+                        document["updated_at"] = datetime_to_str(
+                            datetime=document["updated_at"]
+                        )
+
+                    if document["deleted_at"]:
+                        document["deleted_at"] = datetime_to_str(
+                            datetime=document["deleted_at"]
+                        )
 
         result: dict = {"size": len(documents), "data": documents}
 
@@ -162,14 +163,22 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
 
         for data in update_data:
             converted_data = data.dict(exclude_none=True)
-            for key in data.keys():
+            for key in converted_data.keys():
                 if regex_object := re.match(r"[a-z]+\_id", key):
-                    object_id = converted_data.pop(regex_object.group())
+                    object_id = converted_data[regex_object.group()]
+
+            if regex_object:
+                converted_data.pop(regex_object.group())
+
+            converted_data["updated_at"] = get_datetime()
 
             query.append(
-                UpdateOne({"_id": object_id}, {"$set": converted_data})
+                UpdateOne(
+                    {"_id": ObjectId(object_id)}, {"$set": converted_data}
+                )
             )
 
+        print(query)
         updated_document = await request.app.db[self.collection].bulk_write(
             query
         )
