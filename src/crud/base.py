@@ -4,7 +4,7 @@ from typing import Generic, TypeVar
 from bson.objectid import ObjectId
 from fastapi import Request
 from pydantic import BaseModel
-from pymongo import ASCENDING, DESCENDING, DeleteOne, UpdateOne
+from pymongo import ASCENDING, DESCENDING, DeleteOne, InsertOne, UpdateOne
 
 from src.util import datetime_to_str, decompose_korean, get_datetime
 
@@ -171,6 +171,29 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         ].find_one_and_delete({"_id": ObjectId(id)})
 
         return deleted_document
+
+    async def bulk_create(
+        self, request: Request, insert_data: list[CreateSchema | dict]
+    ) -> bool:
+        query: list[InsertOne] = []
+        for data in insert_data:
+            if type(data) is dict:
+                converted_insert_data = data.copy()
+
+            else:
+                converted_insert_data = data.dict()  # type: ignore
+
+            converted_insert_data["created_at"] = get_datetime()
+            query.append(InsertOne(converted_insert_data))
+
+        inserted_document = await request.app.db[self.collection].bulk_write(
+            query
+        )
+        return (
+            True
+            if (inserted_document.inserted_count == len(insert_data))
+            else False
+        )
 
     async def bulk_update(
         self, request: Request, update_data: list[UpdateSchema]

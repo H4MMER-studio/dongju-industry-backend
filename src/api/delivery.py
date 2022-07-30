@@ -1,5 +1,5 @@
 from bson.objectid import InvalidId
-from fastapi import APIRouter, Depends, Query, Request, status
+from fastapi import APIRouter, Body, Depends, Query, Request, status
 from fastapi.responses import JSONResponse
 
 from src.crud import admin_crud, delivery_crud
@@ -98,7 +98,9 @@ async def get_deliveries(
     dependencies=[Depends(admin_crud.auth_user)],
 )
 async def create_delivery(
-    request: Request, insert_data: CreateDelivery
+    request: Request,
+    type: str = Query(default=None),
+    insert_data: CreateDelivery | bytes = Body(default=None),
 ) -> JSONResponse:
     """
     납품실적 생성(POST) 엔드포인트
@@ -114,18 +116,35 @@ async def create_delivery(
     2. delivery_reference
     """
     try:
-        if await delivery_crud.create(
-            request=request, insert_data=insert_data
-        ):
-            return JSONResponse(
-                content={"detail": "Success"}, status_code=status.HTTP_200_OK
-            )
+        if type == "file":
+            if await delivery_crud.bulk_create(
+                request=request, insert_data=insert_data
+            ):
+                return JSONResponse(
+                    content={"detail": "Success"},
+                    status_code=status.HTTP_200_OK,
+                )
+
+            else:
+                return JSONResponse(
+                    content={"detail": "Database Error"},
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
 
         else:
-            return JSONResponse(
-                content={"detail": "Database Error"},
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+            if await delivery_crud.create(
+                request=request, insert_data=insert_data
+            ):
+                return JSONResponse(
+                    content={"detail": "Success"},
+                    status_code=status.HTTP_200_OK,
+                )
+
+            else:
+                return JSONResponse(
+                    content={"detail": "Database Error"},
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
 
     except Exception as error:
         return JSONResponse(

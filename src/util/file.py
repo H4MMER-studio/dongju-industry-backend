@@ -105,7 +105,7 @@ class CRUDFile:
                         "key": object_key,
                     }
                 )
-        print(result)
+
         return result
 
     async def download(self, object_key: str) -> bytes | None:

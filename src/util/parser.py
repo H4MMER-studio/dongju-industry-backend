@@ -2,6 +2,8 @@ import re
 from datetime import datetime, timedelta, timezone
 from typing import TypeVar
 
+import numpy as np
+import pandas as pd
 from fastapi import UploadFile
 from pydantic import BaseModel, ValidationError
 from starlette.datastructures import FormData
@@ -19,11 +21,73 @@ def datetime_to_str(datetime: datetime) -> str:
     return datetime.strftime("%Y-%m-%d")
 
 
+async def parse_excel_file(excel_file: bytes) -> list[dict]:
+    insert_data: list[dict] = []
+    key_pair: dict[str, str] = {
+        "납품처": "delivery_supplier",
+        "품명 및 규격": "delivery_product",
+        "수량": "delivery_amount",
+        "날짜": "delivery_date",
+        "비고": "delivery_reference",
+    }
+
+    df = pd.ExcelFile(excel_file, engine="openpyxl").parse(index_col=0)
+    converted_df = df.replace({np.NaN: None})
+    for _, row in converted_df.iterrows():
+        temp: dict = {
+            "delivery_supplier": None,
+            "delivery_product": None,
+            "delivery_amount": None,
+            "delivery_year": None,
+            "delivery_month": None,
+            "delivery_reference": None,
+            "updated_at": None,
+            "deleted_at": None,
+        }
+        data = row.to_dict()
+        for key, value in data.items():
+            compared_keys = key_pair.keys()
+            if key in compared_keys:
+                if (eng_key := key_pair[key]) == "delivery_date":
+                    if value:
+                        year, month = str(value).split(".")
+                        if year:
+                            temp["delivery_year"] = int(year)
+
+                        if month:
+                            temp["delivery_month"] = int(month)
+
+                else:
+                    if value:
+                        temp[eng_key] = value
+
+            elif (converted_key := key.replace(" ", "")) in compared_keys:
+                if (eng_key := key_pair[converted_key]) == "delivery_date":
+                    if value:
+                        year, month = str(value).split(".")
+                        if year:
+                            temp["delivery_year"] = int(year)
+
+                        if month:
+                            temp["delivery_month"] = int(month)
+
+                else:
+                    if value:
+                        temp[eng_key] = value
+
+            else:
+                raise ValueError("")
+
+        insert_data.append(temp)
+
+    return insert_data
+
+
 async def parse_formdata(
     form_data: FormData, schema: Schema, collection_name: str
 ) -> Schema:
     if not form_data:
-        raise ValidationError()
+        raise ValidationError("FormData Needed")
 
     else:
         files: list[UploadFile] = []
@@ -46,9 +110,8 @@ async def parse_formdata(
         uploaded_files = await file_crud.upload(
             files=files, need_converted=need_converted
         )
-        print(uploaded_files)
+
         for uploaded_file in uploaded_files:
-            print(uploaded_file)
             if (file_type := uploaded_file.pop("type")) == "image":
                 file_field = f"{collection_name}_{file_type}s"
             else:

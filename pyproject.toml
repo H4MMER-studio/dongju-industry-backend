@@ -18,6 +18,8 @@ gunicorn = "^20.1.0"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 pdf2image = "^1.16.0"
+pandas = "^1.4.3"
+openpyxl = "^3.0.10"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
