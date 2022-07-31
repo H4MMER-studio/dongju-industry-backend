@@ -57,8 +57,10 @@ class CRUDFile:
 
         for file_object in converted_files:
             file_path = re.sub(
-                pattern=r"\W", repl="", string=file_object.filename
-            ).replace(" ", "_")
+                pattern=r"[^0-9a-zA-Z가-힣\.]",
+                repl="_",
+                string=file_object.filename,
+            )
             _, media_type = file_object.content_type.split("/")
             if media_type in ["jpeg", "png"]:
                 file_type = "image"
@@ -105,6 +107,9 @@ class CRUDFile:
                         "key": object_key,
                     }
                 )
+
+        if need_converted and temp_file:
+            temp_file.close()
 
         return result
 
