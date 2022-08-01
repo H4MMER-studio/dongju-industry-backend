@@ -8,15 +8,16 @@ from src.util import datetime_to_str, file_crud
 class CRUDCertification(CRUDBase[CreateCertification, UpdateCertification]):
     async def get_one(self, request: Request, id: str) -> dict | None:
         document = await super().get_one(request=request, id=id)
-        if document["certification_start_date"]:
-            document["certification_start_date"] = datetime_to_str(
-                datetime=document["certification_start_date"]
-            )
+        if document:
+            if document["certification_start_date"]:
+                document["certification_start_date"] = datetime_to_str(
+                    datetime=document["certification_start_date"]
+                )
 
-        if document["certification_end_date"]:
-            document["certification_end_date"] = datetime_to_str(
-                datetime=document["certification_end_date"]
-            )
+            if document["certification_end_date"]:
+                document["certification_end_date"] = datetime_to_str(
+                    datetime=document["certification_end_date"]
+                )
 
         return document
 

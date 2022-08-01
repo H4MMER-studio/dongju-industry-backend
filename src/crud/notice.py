@@ -4,7 +4,7 @@ from pymongo import DESCENDING
 
 from src.crud.base import CRUDBase
 from src.schema import CreateNotice, UpdateNotice
-from src.util import file_crud
+from src.util import datetime_to_str, file_crud
 
 
 class CRUDNotice(CRUDBase[CreateNotice, UpdateNotice]):
@@ -13,6 +13,15 @@ class CRUDNotice(CRUDBase[CreateNotice, UpdateNotice]):
 
         document = await session.find_one({"_id": ObjectId(id)})
         document["_id"] = str(document["_id"])
+        document["created_at"] = datetime_to_str(
+            datetime=document["created_at"]
+        )
+
+        if document["updated_at"]:
+            document["updated_at"] = datetime_to_str(
+                datetime=document["updated_at"]
+            )
+
         result: dict = {"data": {"current": document}}
 
         latest_documents = await session.find(
@@ -23,6 +32,14 @@ class CRUDNotice(CRUDBase[CreateNotice, UpdateNotice]):
 
         for latest_document in latest_documents:
             latest_document["_id"] = str(latest_document["_id"])
+            latest_document["created_at"] = datetime_to_str(
+                datetime=latest_document["created_at"]
+            )
+
+            if latest_document["updated_at"]:
+                latest_document["updated_at"] = datetime_to_str(
+                    datetime=latest_document["updated_at"]
+                )
 
         result["data"]["latest"] = latest_documents
         result["size"] = len(document) + len(latest_documents)
