@@ -149,12 +149,16 @@ async def create_notice(request: Request) -> JSONResponse:
             schema=CreateNotice,
             collection_name="notice",
         )
+        if await notice_crud.create(insert_data=insert_data, request=request):
+            return JSONResponse(
+                content={"detail": "Success"}, status_code=status.HTTP_200_OK
+            )
 
-        await notice_crud.create(insert_data=insert_data, request=request)
-
-        return JSONResponse(
-            content={"detail": "Success"}, status_code=status.HTTP_200_OK
-        )
+        else:
+            return JSONResponse(
+                content={"detail": "Database Error"},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     except ValidationError as validation_error:
         return JSONResponse(

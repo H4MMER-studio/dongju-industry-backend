@@ -57,7 +57,7 @@ class CRUDFile:
 
         for file_object in converted_files:
             file_path = re.sub(
-                pattern=r"[^0-9a-zA-Z가-힣\.]",
+                pattern=r"[\s+\!\*\'\(\)\;\:\@\&\=\+\$\,\/\?\%\#\[\]]",
                 repl="_",
                 string=file_object.filename,
             )
