@@ -108,9 +108,6 @@ class CRUDFile:
                     }
                 )
 
-        if need_converted and temp_file:
-            temp_file.close()
-
         return result
 
     async def download(self, object_key: str) -> bytes | None:
