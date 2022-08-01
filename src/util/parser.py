@@ -115,10 +115,7 @@ async def parse_formdata(
             if (file_type := uploaded_file.pop("type")) == "image":
                 file_field = f"{collection_name}_{file_type}s"
             else:
-                if need_converted:
-                    file_field = f"{collection_name}_images"
-                else:
-                    file_field = f"{collection_name}_files"
+                file_field = f"{collection_name}_files"
 
             if file_field in fields:
                 fields[file_field].append(uploaded_file)
