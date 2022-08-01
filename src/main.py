@@ -33,6 +33,7 @@ origins = [
     "https://dongjuind.co.kr",
     "https://www.dongjuind.co.kr",
     "https://admin.dongjuind.co.kr",
+    "*",
 ]
 app.add_middleware(
     CORSMiddleware,
