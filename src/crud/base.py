@@ -86,10 +86,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
             skip -= 1
 
         documents = await session.find(
-            filter=pipeline,
-            sort=sort_fields,
-            skip=skip,
-            limit=limit - skip,
+            filter=pipeline, sort=sort_fields
         ).to_list(length=None)
 
         if type == "search":
@@ -101,8 +98,8 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
             )
 
         else:
-            if len(documents) > 0:
-                for document in documents:
+            if (data_size := len(documents)) > 0:
+                for document in (documents := documents[skip:limit]):
                     document["_id"] = str(document["_id"])
 
                     document["created_at"] = datetime_to_str(
@@ -119,7 +116,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
                             datetime=document["deleted_at"]
                         )
 
-        result: dict = {"size": len(documents), "data": documents}
+        result: dict = {"size": data_size, "data": documents}
 
         return result
 

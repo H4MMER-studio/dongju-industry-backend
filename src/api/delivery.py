@@ -25,10 +25,10 @@ async def get_deliveries(
     limit: int = Query(default=0, description="페이지네이션 종료 값", example=30),
     sort: list[str] = Query(
         default=[
-            "delivery-year asc",
-            "delivery-month asc",
+            "delivery-year desc",
+            "delivery-month desc",
             "delivery-supplier asc",
-            "delivery-amount asc",
+            "delivery-amount desc",
         ],
         description="정렬 기준",
         example=["delivery-year desc", "delivery-month desc"],
