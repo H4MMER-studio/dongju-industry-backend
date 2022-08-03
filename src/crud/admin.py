@@ -70,9 +70,7 @@ class CRUDAdmin(CRUDBase[CreateAdmin, UpdateAdmin]):
         elif not self.password_context.verify(
             secret=user_data.admin_password, hash=user["admin_password"]
         ):
-            raise HTTPException(
-                detail="Unauthorized", status_code=status.HTTP_401_UNAUTHORIZED
-            )
+            return None
 
         else:
             encoded_data = {

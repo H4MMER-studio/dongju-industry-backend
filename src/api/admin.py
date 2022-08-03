@@ -46,7 +46,8 @@ async def sing_in(request: Request, user_data: CreateAdmin) -> JSONResponse:
 
         else:
             return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_200_OK
+                content={"detail": "Unauthorized"},
+                status_code=status.HTTP_401_UNAUTHORIZED,
             )
 
     except Exception as error:
