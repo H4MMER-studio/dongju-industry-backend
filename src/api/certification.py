@@ -32,18 +32,11 @@ async def get_certification(
     1. _id
     """
     try:
-        if result := await certification_crud.get_one(
+        result = await certification_crud.get_one(
             request=request,
             id=certification_id,
-        ):
-            return JSONResponse(
-                content={"data": result}, status_code=status.HTTP_200_OK
-            )
-
-        else:
-            return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_200_OK
-            )
+        )
+        return JSONResponse(content=result, status_code=status.HTTP_200_OK)
 
     except InvalidId as invalid_id_error:
         return JSONResponse(
@@ -111,17 +104,10 @@ async def get_certifications(
             field=field,
             value=value,
         )
-        if result["size"]:
-            return JSONResponse(
-                content=result,
-                status_code=status.HTTP_200_OK,
-            )
-
-        else:
-            return JSONResponse(
-                content={"data": []},
-                status_code=status.HTTP_200_OK,
-            )
+        return JSONResponse(
+            content=result,
+            status_code=status.HTTP_200_OK,
+        )
 
     except Exception as error:
         return JSONResponse(

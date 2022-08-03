@@ -74,16 +74,10 @@ async def get_deliveries(
             field=field,
             value=value,
         )
-        if result["size"]:
-            return JSONResponse(
-                content=result,
-                status_code=status.HTTP_200_OK,
-            )
-
-        else:
-            return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_200_OK
-            )
+        return JSONResponse(
+            content=result,
+            status_code=status.HTTP_200_OK,
+        )
 
     except Exception as error:
         return JSONResponse(

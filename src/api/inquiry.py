@@ -24,17 +24,8 @@ async def get_inquiry(request: Request, inquiry_id: str):
     1. _id
     """
     try:
-        if result := await inquiry_crud.get_one(
-            request=request, id=inquiry_id
-        ):
-            return JSONResponse(
-                content={"data": result}, status_code=status.HTTP_200_OK
-            )
-
-        else:
-            return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_200_OK
-            )
+        result = await inquiry_crud.get_one(request=request, id=inquiry_id)
+        return JSONResponse(content=result, status_code=status.HTTP_200_OK)
 
     except InvalidId as invalid_id_error:
         return JSONResponse(
@@ -90,16 +81,10 @@ async def get_inquries(
             field=field,
             value=value,
         )
-        if result["size"]:
-            return JSONResponse(
-                content=result,
-                status_code=status.HTTP_200_OK,
-            )
-
-        else:
-            return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_200_OK
-            )
+        return JSONResponse(
+            content=result,
+            status_code=status.HTTP_200_OK,
+        )
 
     except Exception as error:
         return JSONResponse(

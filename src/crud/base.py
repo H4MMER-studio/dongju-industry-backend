@@ -18,10 +18,10 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
 
     async def get_one(self, request: Request, id: str) -> dict | None:
         session = request.app.db[self.collection]
-        if not (document := await session.find_one({"_id": ObjectId(id)})):
-            return None
 
-        else:
+        result = {"size": 0, "data": []}
+
+        if document := await session.find_one({"_id": ObjectId(id)}):
             document["_id"] = str(document["_id"])
             document["created_at"] = datetime_to_str(
                 datetime=document["created_at"]
@@ -37,7 +37,10 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
                     datetime=document["deleted_at"]
                 )
 
-            return document
+            result["size"] = 1
+            result["data"] = document
+
+        return result
 
     async def get_multi(
         self,
@@ -52,10 +55,10 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         session = request.app.db[self.collection]
 
         pipeline: dict = {}
-        if type == "filter" and field and value:
+        if type == "filter" and field:
             pipeline[field] = value
 
-        elif field and value:
+        elif type == "search" and field:
             decomposed_keyword: str = await decompose_korean(value)
             converted_field: str = field.replace("-", "_")
 
@@ -82,9 +85,6 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         else:
             sort_fields.append(("$natural", DESCENDING))
 
-        if skip:
-            skip -= 1
-
         documents = await session.find(
             filter=pipeline, sort=sort_fields
         ).to_list(length=None)
@@ -100,7 +100,10 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
 
         else:
             if (data_size := len(documents)) > 0:
-                for document in (documents := documents[skip:limit]):
+                if skip:
+                    skip -= 1
+                    documents = documents[skip:limit]
+                for document in documents:
                     document["_id"] = str(document["_id"])
 
                     document["created_at"] = datetime_to_str(

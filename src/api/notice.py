@@ -31,16 +31,10 @@ async def get_notice(request: Request, notice_id: str) -> JSONResponse:
     """
     try:
         result = await notice_crud.get_one(request=request, id=notice_id)
-        if result["size"]:
-            return JSONResponse(
-                content=result,
-                status_code=status.HTTP_200_OK,
-            )
-
-        else:
-            return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_200_OK
-            )
+        return JSONResponse(
+            content=result,
+            status_code=status.HTTP_200_OK,
+        )
 
     except InvalidId as invalid_id_error:
         return JSONResponse(
@@ -98,16 +92,10 @@ async def get_notices(
             field="notice_type",
             value=value.value,
         )
-        if result["size"]:
-            return JSONResponse(
-                content=result,
-                status_code=status.HTTP_200_OK,
-            )
-
-        else:
-            return JSONResponse(
-                content={"data": []}, status_code=status.HTTP_200_OK
-            )
+        return JSONResponse(
+            content=result,
+            status_code=status.HTTP_200_OK,
+        )
 
     except Exception as error:
         return JSONResponse(
