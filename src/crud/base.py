@@ -96,6 +96,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
                     for document in documents
                 }
             )
+            data_size = len(documents)
 
         else:
             if (data_size := len(documents)) > 0:
