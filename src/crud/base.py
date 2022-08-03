@@ -59,6 +59,8 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
             pipeline[field] = value
 
         elif type == "search" and field:
+            if not value:
+                return {"size": 0, "data": []}
             decomposed_keyword: str = await decompose_korean(value)
             converted_field: str = field.replace("-", "_")
 
