@@ -19,7 +19,7 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
     async def get_one(self, request: Request, id: str) -> dict | None:
         session = request.app.db[self.collection]
 
-        result = {"size": 0, "data": []}
+        result = {"size": 0, "data": {}}
 
         if document := await session.find_one({"_id": ObjectId(id)}):
             document["_id"] = str(document["_id"])

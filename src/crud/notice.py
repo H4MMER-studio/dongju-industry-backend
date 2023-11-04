@@ -12,7 +12,7 @@ class CRUDNotice(CRUDBase[CreateNotice, UpdateNotice]):
         session = request.app.db[self.collection]
         document = await session.find_one({"_id": ObjectId(id)})
 
-        result: dict = {"data": [], "size": 0}
+        result: dict = {"data": {}, "size": 0}
         if document:
             document["_id"] = str(document["_id"])
             document["created_at"] = datetime_to_str(
