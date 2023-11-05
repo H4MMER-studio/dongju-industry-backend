@@ -72,7 +72,7 @@ class CRUDDelivery(CRUDBase[CreateDelivery, UpdateDelivery]):
         return result
 
     async def bulk_create(
-        self, request: Request, insert_data: list[CreateSchema | dict]
+        self, request: Request, insert_data: bytes
     ) -> bool:
         converted_insert_data: list[dict] = []
         excel_data = await parse_excel_file(excel_file=insert_data)

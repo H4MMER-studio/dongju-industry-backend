@@ -1,5 +1,5 @@
 from bson.objectid import InvalidId
-from fastapi import APIRouter, Body, Depends, Query, Request, status
+from fastapi import APIRouter, Body, Depends, Query, Request, status, File
 from fastapi.responses import JSONResponse
 
 from src.crud import admin_crud, delivery_crud
@@ -93,8 +93,7 @@ async def get_deliveries(
 )
 async def create_delivery(
     request: Request,
-    type: str = Query(default=None),
-    insert_data: CreateDelivery | bytes = Body(default=None),
+    insert_data: CreateDelivery
 ) -> JSONResponse:
     """
     납품실적 생성(POST) 엔드포인트
@@ -109,36 +108,20 @@ async def create_delivery(
     1. delivery_month
     2. delivery_reference
     """
-    try:
-        if type == "file":
-            if await delivery_crud.bulk_create(
-                request=request, insert_data=insert_data
-            ):
-                return JSONResponse(
-                    content={"detail": "Success"},
-                    status_code=status.HTTP_200_OK,
-                )
-
-            else:
-                return JSONResponse(
-                    content={"detail": "Database Error"},
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+    try:        
+        if await delivery_crud.create(
+            request=request, insert_data=insert_data
+        ):
+            return JSONResponse(
+                content={"detail": "Success"},
+                status_code=status.HTTP_200_OK,
+            )
 
         else:
-            if await delivery_crud.create(
-                request=request, insert_data=insert_data
-            ):
-                return JSONResponse(
-                    content={"detail": "Success"},
-                    status_code=status.HTTP_200_OK,
-                )
-
-            else:
-                return JSONResponse(
-                    content={"detail": "Database Error"},
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+            return JSONResponse(
+                content={"detail": "Database Error"},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     except Exception as error:
         return JSONResponse(
@@ -146,6 +129,42 @@ async def create_delivery(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
+
+@router.post(
+    path=PLURAL_PREFIX,
+    responses=create_delivery_response,
+    dependencies=[Depends(admin_crud.auth_user)],        
+)
+async def create_deliveris(
+    request: Request, file: bytes = File(default=...)
+) -> JSONResponse:
+    """
+    납품실적 Excel 파일 업로드(POST) 엔드포인트
+
+    form-data 형태로 file이라는 키에 Excel 파일을 업로드하면 된다.
+    """
+    try: 
+        if await delivery_crud.bulk_create(
+            request=request, insert_data=file
+        ):
+            return JSONResponse(
+                content={"detail": "Success"},
+                status_code=status.HTTP_200_OK,
+            )
+
+        else:
+            return JSONResponse(
+                content={"detail": "Database Error"},
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )    
+        
+    except Exception as error:
+        return JSONResponse(
+            content={"detail": str(error)},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+        
+    
 
 @router.patch(
     path=SINGLE_PREFIX + "/{delivery_id}",
