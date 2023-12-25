@@ -135,26 +135,3 @@ async def create_inquiry(
             content={"detail": str(error)},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
-
-@router.post(
-    path=SINGLE_PREFIX,
-    responses={},
-    dependencies=[Depends(admin_crud.auth_user)],
-)
-async def reply_inquiry(
-    request: Request,
-) -> JSONResponse:
-    """
-    고객문의 답변(POST) 엔드포인트
-
-
-    """
-    try:
-        return
-
-    except Exception as error:
-        return JSONResponse(
-            content={"detail": str(error)},
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )

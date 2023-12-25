@@ -40,7 +40,7 @@ class CRUDIquiry(CRUDBase[CreateInquiry, UpdateInquiry]):
         self, request: Request, insert_data: CreateInquiry
     ) -> bool:
         converted_insert_data = await create_decompsed_korean_field(
-            schema=insert_data.dict(),
+            data=insert_data.dict(),
             fields=["inquiry_person_name", "inquiry_company_name"],
         )
 
@@ -53,7 +53,7 @@ class CRUDIquiry(CRUDBase[CreateInquiry, UpdateInquiry]):
         self, request: Request, id: str, update_data: UpdateInquiry
     ) -> dict:
         converted_update_data = await create_decompsed_korean_field(
-            schema=update_data.dict(exclude_none=True),
+            data=update_data.dict(exclude_none=True),
             fields=["inquiry_person_name", "inquiry_company_name"],
         )
         result = await super().update(

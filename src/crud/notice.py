@@ -59,11 +59,8 @@ class CRUDNotice(CRUDBase[CreateNotice, UpdateNotice]):
             result["detail"] = "Not Found"
 
         else:
-            for image, file in zip(
-                deleted_document["notice_images"],
-                deleted_document["notice_files"],
-            ):
-                if image:
+            if deleted_document["notice_images"]:
+                for image in  deleted_document["notice_images"]:
                     image_result = await file_crud.delete(
                         object_key=image["key"]
                     )
@@ -72,11 +69,12 @@ class CRUDNotice(CRUDBase[CreateNotice, UpdateNotice]):
                         != 204
                     ):
                         result["status"] = False
-                        result["detail"] = "AWS S3"
+                        result["detail"] = "AWS S3"           
 
-                if file:
+            if deleted_document["notice_files"]:
+                for file in deleted_document["notice_files"]:
                     file_result = await file_crud.delete(
-                        object_key=image["key"]
+                        object_key=file["key"]
                     )
                     if (
                         file_result["ResponseMetadata"]["HTTPStatusCode"]
