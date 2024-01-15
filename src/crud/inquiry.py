@@ -58,54 +58,34 @@ class CRUDIquiry(CRUDBase[CreateInquiry, UpdateInquiry]):
 
         if type == "search":
             data_size = len(documents)
-            for document in documents:
-                document["_id"] = str(document["_id"])
-
-                document["created_at"] = datetime_to_str(
-                    datetime=document["created_at"]
-                )
-
-                if document["updated_at"]:
-                    document["updated_at"] = datetime_to_str(
-                        datetime=document["updated_at"]
-                    )
-
-                if document["deleted_at"]:
-                    document["deleted_at"] = datetime_to_str(
-                        datetime=document["deleted_at"]
-                    )              
 
         else:
             if (data_size := len(documents)) > 0:
                 if skip:
                     skip -= 1
                     documents = documents[skip:limit]
-                for document in documents:
-                    document["_id"] = str(document["_id"])
 
-                    document["created_at"] = datetime_to_str(
-                        datetime=document["created_at"]
-                    )
+        for document in documents:
+            document["_id"] = str(document["_id"])
 
-                    if document["updated_at"]:
-                        document["updated_at"] = datetime_to_str(
-                            datetime=document["updated_at"]
-                        )
+            document["created_at"] = datetime_to_str(
+                datetime=document["created_at"]
+            )
 
-                    if document["deleted_at"]:
-                        document["deleted_at"] = datetime_to_str(
-                            datetime=document["deleted_at"]
-                        )        
+            if document["updated_at"]:
+                document["updated_at"] = datetime_to_str(
+                    datetime=document["updated_at"]
+                )
+
+            if document["deleted_at"]:
+                document["deleted_at"] = datetime_to_str(
+                    datetime=document["deleted_at"]
+                )
+
+            document["inquiry_company_name"] = document["inquiry_company_name"]["composed"]
+            document["inquiry_person_name"] = document["inquiry_person_name"]["composed"]
 
         result: dict = {"size": data_size, "data": documents}
-        if result["size"] and not type == "search":
-            for data in result["data"]:
-                data["inquiry_company_name"] = data.pop(
-                    "inquiry_company_name"
-                )["composed"]
-                data["inquiry_person_name"] = data.pop("inquiry_person_name")[
-                    "composed"
-                ]
 
         return result
 
