@@ -92,7 +92,6 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
         ).to_list(length=None)
 
         if type == "search":
-            converted_field: str = field.replace("-", "_")
             documents = list(
                 {
                     document[converted_field]["composed"]

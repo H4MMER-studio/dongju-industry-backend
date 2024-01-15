@@ -55,7 +55,7 @@ async def get_inquries(
         example=["created-at desc"],
     ),
     type: str = Query(default=None, description="조회 방법", example="search"),
-    field: str = Query(default="inquiry-title", description="검색 대싱이 되는 필드", example=""),
+    field: str = Query(default="inquiry_company_name", description="검색 대싱이 되는 필드", example=""),
     value: str = Query(default=None, description="검색어", example="ㅎㅐ"),
 ) -> JSONResponse:
     """

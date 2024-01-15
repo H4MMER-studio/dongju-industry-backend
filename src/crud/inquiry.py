@@ -25,6 +25,7 @@ class CRUDIquiry(CRUDBase[CreateInquiry, UpdateInquiry]):
             field=field,
             value=value,
         )
+        print(result)
         if result["size"] and not type == "search":
             for data in result["data"]:
                 data["inquiry_company_name"] = data.pop(
