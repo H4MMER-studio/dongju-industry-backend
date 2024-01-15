@@ -122,7 +122,6 @@ class CRUDBase(Generic[CreateSchema, UpdateSchema]):
                             datetime=document["deleted_at"]
                         )
 
-        print(documents)
         result: dict = {"size": data_size, "data": documents}
 
         return result
